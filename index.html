@@ -5,8 +5,8 @@
   <title>報名系統</title>
   <script src="https://static.line-scdn.net/liff/2.1/sdk.js"></script>
   <script>
-    // 初始化LIFF應用
     window.onload = function () {
+      // 使用你的 LIFF ID
       liff.init({ liffId: "2006843080-qeWaGpZA" })
         .then(() => {
           if (liff.isLoggedIn()) {
@@ -19,7 +19,6 @@
         .catch((err) => console.error("LIFF初始化錯誤", err));
     };
 
-    // 提交表單資料到 Google Apps Script Web 應用
     function submitForm() {
       const name = document.getElementById("name").value;
       const note = document.getElementById("note").value;
@@ -29,7 +28,6 @@
         return;
       }
 
-      // 將資料提交到 Google Apps Script Web 應用
       const url = "https://script.google.com/macros/s/AKfycby3ASCVrlh6VZfkfDy9aY5IpjBtYtObUSlQTkKdVwcK6lrOeL1LiMHA9fHnyHGyWogu/exec";  // 填入你的 Web 應用 URL
       const data = {
         name: name,
@@ -65,7 +63,7 @@
     <form onsubmit="event.preventDefault(); submitForm();">
       <label for="name">姓名:</label><br>
       <input type="text" id="name" required><br>
-      <label for="note">備註 (只有主辦人看見):</label><br>
+      <label for="note">備註 (非必填):</label><br>
       <textarea id="note"></textarea><br><br>
       <button type="submit">提交報名</button>
     </form>
