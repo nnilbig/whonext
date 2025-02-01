@@ -18,7 +18,7 @@
     <button type="submit">送出報名</button>
   </form>
   <script>
-    const liffId = "@022rlrul";  // 替換為你的 LIFF ID
+    const liffId = "2006843080-qeWaGpZA";  // 替換為你的 LIFF ID
     const googleScriptUrl = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 替換為你的 Google Apps Script Web App URL
   
     liff.init({ liffId })
@@ -43,19 +43,6 @@
         console.error("發送資料錯誤", error);
         alert("報名失敗，請稍後再試！");
       });
-    });
-  </script>
-
-  <script>
-    const liffId = "@022rlrul"; // 替換成你的 LIFF ID
-
-    liff.init({ liffId })
-      .then(() => console.log("LIFF 初始化成功"))
-      .catch(err => console.error("LIFF 初始化失敗", err));
-
-    document.getElementById('registrationForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      alert("報名成功！");
     });
   </script>
 </body>
