@@ -1,68 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LIFF 報名表單</title>
-  <!-- 引入 LIFF SDK -->
+  <title>報名系統</title>
   <script src="https://static.line-scdn.net/liff/2.1/sdk.js"></script>
-</head>
-<body>
-  <h1>LIFF 報名表單</h1>
-  <form id="registrationForm">
-    <label for="name">姓名：</label>
-    <input type="text" id="name" required>
-    
-    <label for="remarks">備註：</label>
-    <textarea id="remarks" required></textarea>
-    
-    <button type="submit">提交</button>
-  </form>
-
   <script>
-    // 確保 LIFF SDK 被加載後再執行初始化
-    window.onload = function() {
-      const liffId = "2006843080-qeWaGpZA";  // 替換為你的 LIFF ID
-      const googleScriptUrl = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 替換為你的 Google Apps Script Web App URL
-
-      // 初始化 LIFF
-      liff.init({ liffId })
-        .then(() => console.log("LIFF 初始化成功"))
-        .catch(err => console.error("LIFF 初始化失敗", err));
-
-      // 表單提交事件
-      document.getElementById('registrationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // 獲取表單資料
-        const name = document.getElementById('name').value;
-        const remarks = document.getElementById('remarks').value;
-
-        // 封裝資料
-        const postData = { name, remarks };
-
-        // 發送 POST 請求到 Google Apps Script
-        fetch(googleScriptUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(postData)  // 轉換資料為 JSON 格式
-        })
-        .then(response => response.json())  // 預期回應為 JSON 格式
-        .then(data => {
-          if (data.status === "success") {
-            alert("報名成功，資料已儲存！");
+    // 初始化LIFF應用
+    window.onload = function () {
+      liff.init({ liffId: "2006843080-qeWaGpZA" })
+        .then(() => {
+          if (liff.isLoggedIn()) {
+            document.getElementById("loginBtn").style.display = "none";
+            document.getElementById("form").style.display = "block";
           } else {
-            alert("報名失敗，請稍後再試！");
+            liff.login();
           }
         })
-        .catch(error => {
-          console.error("發送資料錯誤", error);
-          alert("報名失敗，請稍後再試！");
-        });
-      });
+        .catch((err) => console.error("LIFF初始化錯誤", err));
     };
+
+    // 提交表單資料到 Google Apps Script Web 應用
+    function submitForm() {
+      const name = document.getElementById("name").value;
+      const note = document.getElementById("note").value;
+
+      if (!name) {
+        alert("姓名為必填項目!");
+        return;
+      }
+
+      // 將資料提交到 Google Apps Script Web 應用
+      const url = "https://script.google.com/macros/s/AKfycby3ASCVrlh6VZfkfDy9aY5IpjBtYtObUSlQTkKdVwcK6lrOeL1LiMHA9fHnyHGyWogu/exec";  // 填入你的 Web 應用 URL
+      const data = {
+        name: name,
+        note: note
+      };
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        alert("報名成功！");
+        document.getElementById("form").reset();
+      })
+      .catch(error => {
+        alert("報名失敗，請再試一次！");
+        console.error("Error:", error);
+      });
+    }
   </script>
+</head>
+<body>
+  <div id="loginBtn" style="display: block;">
+    <button onclick="liff.login()">使用LINE登入</button>
+  </div>
+
+  <div id="form" style="display: none;">
+    <h2>報名表單</h2>
+    <form onsubmit="event.preventDefault(); submitForm();">
+      <label for="name">姓名:</label><br>
+      <input type="text" id="name" required><br>
+      <label for="note">備註 (非必填):</label><br>
+      <textarea id="note"></textarea><br><br>
+      <button type="submit">提交報名</button>
+    </form>
+  </div>
 </body>
 </html>
