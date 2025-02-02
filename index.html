@@ -4,21 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHONEXT報名小助手</title>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 </head>
 <body>
-    <h2>WHONEXT報名小助手</h2>
-    <form id="signupForm">
-        <input type="text" id="name" placeholder="姓名" required>
-        <input type="text" id="note" placeholder="只有主辦人看見，例如，我只跟正妹打，謝謝。">
-        <button type="submit">我要報名</button>
-        <button type="button" id="cancelBtn">取消報名</button>
-    </form>
-    <p id="status"></p>
 
-    <h3>已報名名單</h3>
-    <ul id="participants"></ul>
+    <h2>WHONEXT報名小助手</h2>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div id="tab1" class="tab active" onclick="switchTab(1)">報名資訊</div>
+        <div id="tab2" class="tab" onclick="switchTab(2)">已報名者</div>
+    </div>
+
+    <!-- 報名資訊 Tab -->
+    <div id="tabContent1" class="tabContent">
+        <div id="signupForm">
+            <input type="text" id="name" placeholder="姓名" required>
+            <input type="text" id="note" placeholder="只有主辦人看見，例如，我只跟帥哥打，謝謝。">
+            <button id="signupBtn">我要報名</button>
+        </div>
+
+        <div class="event-info">
+            <p>時間：2025/02/07 20:00-22:00</p>
+            <p>場地：大墩羽球大慶館 4號及5號場</p>
+            <p>費用：早鳥180元，一般價200元</p>
+        </div>
+    </div>
+
+    <!-- 已報名者 Tab -->
+    <div id="tabContent2" class="tabContent" style="display:none;">
+        <div id="participants">
+            <ul></ul>
+        </div>
+        <div class="statistics" id="statistics">
+            目前的人數: 0 / 16
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
