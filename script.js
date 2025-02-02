@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register`, {
                 method: "POST",
+                mode: "no-cors",
                 body: JSON.stringify({ name, note }),
                 headers: { "Content-Type": "application/json" }
             });
@@ -67,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 let response = await fetch(`${APP_SCRIPT_URL}?action=cancel`, {
                     method: "POST",
+                    mode: "no-cors",
                     body: JSON.stringify({ name }),
                     headers: { "Content-Type": "application/json" }
                 });
