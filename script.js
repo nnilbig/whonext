@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register`, {
                 method: "POST",
-                mode: "no-cors",
                 body: JSON.stringify({ name, note }),
                 headers: { "Content-Type": "application/json" }
             });
@@ -68,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 let response = await fetch(`${APP_SCRIPT_URL}?action=cancel`, {
                     method: "POST",
-                    mode: "no-cors",
                     body: JSON.stringify({ name }),
                     headers: { "Content-Type": "application/json" }
                 });
@@ -81,5 +79,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    fetchRegisteredUsers();
+    // 在頁面載入時初始化LIFF並加載報名者資料
+    liff.init({ liffId: LIFF_ID })
+        .then(() => {
+            fetchRegisteredUsers();
+        })
+        .catch((err) => {
+            console.error("LIFF 初始化失敗:", err);
+        });
 });
