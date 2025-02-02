@@ -51,7 +51,7 @@
 
             const data = { name, note };
 
-            document.getElementById("status").innerText = "提交中...";
+            document.getElementById("status").innerText = "小助手確認中...";
             try {
                 // 先檢查名稱是否已經報名
                 const checkResponse = await fetch(APP_SCRIPT_URL + "?action=check&name=" + encodeURIComponent(name), {
