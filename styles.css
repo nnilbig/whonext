@@ -94,7 +94,7 @@ button:hover {
 }
 
 .cancel-btn {
-    background: red;
+    background: #FF9800;
     color: white;
     padding: 5px 10px;
     border: none;
