@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WHONEXT報名小助手</title>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <style>
+        /* 基本設置 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212; /* 深黑背景 */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: white;
+        }
+
+        /* Tab 相關樣式 */
+        .tabs {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            background-color: #333;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: white;
+        }
+
+        .tab.active {
+            background-color: #D32F2F; /* 活動tab選擇顏色 */
+        }
+
+        .tab:hover {
+            background-color: #555;
+        }
+
+        /* 報名資訊和已報名名單區塊 */
+        #signupForm, #participants {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        input, button {
+            margin: 10px;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #D32F2F; /* 紅色按鈕 */
+            color: white;
+            border: none;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #c62828;
+        }
+
+        #participants ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        #participants li {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cancel-btn {
+            color: red;
+            cursor: pointer;
+        }
+
+        /* 活動資訊樣式 */
+        .event-info {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* 取消報名的紅色X符號 */
+        .cancel-btn {
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* 頁面底部統計 */
+        .statistics {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>WHONEXT報名小助手</h2>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div id="tab1" class="tab active" onclick="switchTab(1)">報名資訊</div>
+        <div id="tab2" class="tab" onclick="switchTab(2)">已報名者</div>
+    </div>
+
+    <!-- 報名資訊 Tab -->
+    <div id="tabContent1" class="tabContent">
+        <div id="signupForm">
+            <input type="text" id="name" placeholder="姓名" required>
+            <input type="text" id="note" placeholder="只有主辦人看見，例如，我只跟帥哥打，謝謝。">
+            <button id="signupBtn">我要報名</button>
+        </div>
+
+        <div class="event-info">
+            <p>時間：2025/02/07 20:00-22:00</p>
+            <p>場地：大墩羽球大慶館 4號及5號場</p>
+            <p>費用：早鳥180元，一般價200元</p>
+        </div>
+    </div>
+
+    <!-- 已報名者 Tab -->
+    <div id="tabContent2" class="tabContent" style="display:none;">
+        <div id="participants">
+            <ul></ul>
+        </div>
+        <div class="statistics" id="statistics">
+            目前的人數: 0 / 16
+        </div>
+    </div>
+
+    <script>
+        const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDHMrj9cISj7peci6N2_DGpHuc7zRbs5EaxlGA3BJp1CS90eUe4brROamFhgr_UwiZAg/exec";  // 替換為你的 Google Apps Script URL
+
+        function switchTab(tabNumber) {
+            if (tabNumber === 1) {
+                document.getElementById("tabContent1").style.display = "block";
+                document.getElementById("tabContent2").style.display = "none";
+                document.getElementById("tab1").classList.add("active");
+                document.getElementById("tab2").classList.remove("active");
+            } else {
+                document.getElementById("tabContent1").style.display = "none";
+                document.getElementById("tabContent2").style.display = "block";
+                document.getElementById("tab2").classList.add("active");
+                document.getElementById("tab1").classList.remove("active");
+            }
+        }
+
+        // 報名
+        document.getElementById("signupBtn").addEventListener("click", async function() {
+            const name = document.getElementById("name").value.trim();
+            const note = document.getElementById("note").value.trim();
+            if (!name) return alert("請輸入姓名");
+
+            document.getElementById("signupBtn").disabled = true;
+
+            try {
+                const response = await fetch(APP_SCRIPT_URL + "?action=add&name=" + encodeURIComponent(name) + "&note=" + encodeURIComponent(note), {
+                    method: "GET",
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert("報名成功！");
+                    loadParticipants();
+                } else {
+                    alert("報名失敗：" + result.message);
+                }
+            } catch (error) {
+                alert("提交失敗：" + error.message);
+            }
+
+            document.getElementById("signupBtn").disabled = false;
+        });
+
+        async function loadParticipants() {
+            try {
+                const response = await fetch(APP_SCRIPT_URL + "?action=load", {
+                    method: "GET",
+                });
+
+                const data = await response.json();
+                const list = document.getElementById("participants").querySelector("ul");
+                list.innerHTML = "";
+                if (data.participants) {
+                    data.participants.forEach((participant, index) => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `${index + 1}. ${participant.name} <span class="cancel-btn" onclick="removeParticipant(${index})">X</span>`;
+                        list.appendChild(listItem);
+                    });
+                }
+                document.getElementById("statistics").innerText = `目前的人數: ${data.participants.length} / 16`;
+            } catch (error) {
+                alert("載入報名名單失敗：" + error.message);
+            }
+        }
+
+        async function removeParticipant(index) {
+            try {
+                const response = await fetch(APP_SCRIPT_URL + "?action=remove&index=" + encodeURIComponent(index), {
+                    method: "GET",
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert("取消成功！");
+                    loadParticipants();
+                } else {
+                    alert("找不到報名記錄！");
+                }
+            } catch (error) {
+                alert("取消報名失敗：" + error.message);
+            }
+        }
+
+        loadParticipants();  // 頁面載入時初始化名單
+    </script>
+
+</body>
+</html>
