@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             background-color: #121212; /* 深黑背景 */
-            color: white;
+            color: #C0C0C0; /* 銀色字體 */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -28,6 +28,7 @@
             width: 100%;
             justify-content: center;
             background-color: #333; /* 深灰色背景 */
+            border-bottom: 2px solid #B0B0B0;
         }
 
         .tab {
@@ -49,7 +50,7 @@
         /* 報名資訊和已報名名單區塊 */
         #signupForm, #participants {
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             text-align: center;
         }
 
@@ -58,14 +59,14 @@
             padding: 12px;
             width: 100%;
             box-sizing: border-box;
-            border-radius: 5px; /* 圓角設計 */
+            border-radius: 5px;
+            font-size: 16px;
         }
 
         button {
             background-color: #4A4A4A; /* 柔和的灰色 */
             color: white;
             border: none;
-            font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
@@ -97,7 +98,6 @@
             color: #FFCC00; /* 金色 */
         }
 
-        /* 活動資訊樣式 */
         .event-info {
             font-size: 14px;
             margin-top: 10px;
@@ -111,7 +111,6 @@
             color: #B0B0B0; /* 銀色 */
         }
 
-        /* 頁面底部統計 */
         .statistics {
             font-size: 14px;
             margin-top: 10px;
@@ -144,7 +143,7 @@
         </div>
 
         <!-- 報名狀態顯示區塊 -->
-        <div id="signupStatus">
+        <div id="signupStatus" style="display:none;">
             等待小助手處理中...
         </div>
     </div>
@@ -189,6 +188,7 @@
             if (!name) return alert("請輸入姓名");
 
             // 顯示報名狀態
+            document.getElementById("signupStatus").style.display = "block";
             document.getElementById("signupStatus").innerText = "等待小助手處理中...";
 
             document.getElementById("signupBtn").disabled = true;
@@ -245,13 +245,12 @@
                     alert("取消成功！");
                     loadParticipants();
                 } else {
-                    alert("找不到報名記錄！");
+                    alert("取消報名失敗：" + result.message);
                 }
             } catch (error) {
                 alert("取消報名失敗：" + error.message);
             }
         }
     </script>
-
 </body>
 </html>
