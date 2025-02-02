@@ -4,36 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHONEXT報名小助手</title>
-    <link rel="stylesheet" href="styles.css">  <!-- 引入外部CSS檔案 -->
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
     <h2>WHONEXT報名小助手</h2>
+    <form id="signupForm">
+        <input type="text" id="name" placeholder="姓名" required>
+        <input type="text" id="note" placeholder="只有主辦人看見，例如，我只跟正妹打，謝謝。">
+        <button type="submit">我要報名</button>
+        <button type="button" id="cancelBtn">取消報名</button>
+    </form>
+    <p id="status"></p>
 
-    <!-- Tabs -->
-    <div class="tabs">
-        <div class="tab active" id="tabSignupInfo">報名資訊</div>
-        <div class="tab" id="tabParticipants">已報名者</div>
-    </div>
-
-    <!-- 報名資訊 Tab -->
-    <div id="signupForm" class="tab-content">
-        <input type="text" id="name" placeholder="請輸入姓名" />
-        <input type="text" id="remarks" placeholder="只有主辦人看見，例如，我只跟帥哥打，謝謝。" />
-        <button id="signupBtn">我要報名</button>
-        <div id="signupStatus"></div>
-        <div class="event-info">
-            <p>活動時間: 2025-02-02</p>
-            <p>場地: 羽球場</p>
-            <p>費用: 200元</p>
-        </div>
-    </div>
-
-    <!-- 已報名者 Tab -->
-    <div id="participants" class="tab-content" style="display: none;">
-        <div class="statistics" id="statistics"></div>
-        <ul id="participantsList"></ul>
-    </div>
+    <h3>已報名名單</h3>
+    <ul id="participants"></ul>
 
     <script src="script.js"></script>
 </body>
