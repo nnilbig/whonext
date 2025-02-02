@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
             statusMessage.textContent = "請輸入姓名！";
             return;
         }
-        statusMessage.textContent = "小助手查詢中...";
+        statusMessage.textContent = "小助手協助中...";
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register`, {
                 method: "POST",
