@@ -6,39 +6,78 @@
     <title>WHONEXT報名小助手</title>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        /* 设置整体黑色背景和神秘风格 */
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            background-color: #121212; /* 背景为深黑色 */
+            color: #E0E0E0; /* 浅灰色字体，增加对比 */
+            margin: 0;
+            height: 100vh;
+        }
+        
+        h2 {
+            color: #ffffff; /* 标题颜色为白色 */
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* 白色阴影增强神秘感 */
+            margin-bottom: 20px;
+        }
+
+        /* Tab 样式 */
         .tab-container {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             margin-bottom: 20px;
+            border-bottom: 2px solid #444;
         }
         .tab {
             cursor: pointer;
-            padding: 10px;
-            border: 1px solid #ccc;
-            width: 45%;
+            padding: 12px 20px;
+            border: 1px solid #333;
+            background-color: #222;
+            color: #BDBDBD;
             font-weight: bold;
+            width: 50%;
+            text-align: center;
+            transition: all 0.3s ease;
         }
         .tab.active {
-            background-color: #4CAF50;
-            color: white;
-            border: 1px solid #4CAF50;
+            background-color: #444;
+            color: #ffffff;
+            border: 1px solid #666;
         }
+
+        /* 内容区域 */
         .content {
             display: none;
         }
         .content.active {
             display: block;
         }
+
+        /* 表单输入和按钮 */
         input, button {
             margin: 10px;
-            padding: 8px;
-            width: 80%;
-        }
-        button {
-            font-size: 18px;  /* Increase button size */
             padding: 12px;
+            width: 80%;
+            background-color: #333;
+            border: 1px solid #444;
+            color: #E0E0E0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
+
+        button {
+            font-size: 18px;
+            padding: 15px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        /* 报名者名单样式 */
         #participants { 
             margin-top: 20px; 
             text-align: left; 
@@ -47,7 +86,14 @@
             padding-left: 0;
         }
         #participants li {
-            margin: 5px 0;
+            margin: 10px 0;
+            background-color: #1E1E1E;
+            padding: 12px;
+            border-radius: 5px;
+            color: #E0E0E0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .cancel-btn {
             background-color: #f44336;
@@ -55,9 +101,21 @@
             border: none;
             cursor: pointer;
             padding: 5px;
+            border-radius: 3px;
         }
         .cancel-btn:hover {
             background-color: #d32f2f;
+        }
+
+        /* 事件信息 */
+        #event-info {
+            background-color: #1E1E1E;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        #event-info p {
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -87,15 +145,17 @@
     </div>
 
     <!-- 已報名者 Tab -->
-    <div class="content" id="participants-list">
+    <div class="content" id="participants-info">
         <h3>已報名者</h3>
         <ul id="participants"></ul>
     </div>
 
     <script>
-        const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
-        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDHMrj9cISj7peci6N2_DGpHuc7zRbs5EaxlGA3BJp1CS90eUe4brROamFhgr_UwiZAg/exec";  // 替換為你的 Google Apps Script URL
+        const LIFF_ID = "2006843080-qeWaGpZA";  // 请替换为您的 LIFF ID
+        const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 您的 Google 试算表 ID
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDHMrj9cISj7peci6N2_DGpHuc7zRbs5EaxlGA3BJp1CS90eUe4brROamFhgr_UwiZAg/exec";  // 替换为您的 Google Apps Script URL
 
+        // 初始化LIFF
         async function initLiff() {
             await liff.init({ liffId: LIFF_ID });
             if (liff.isLoggedIn()) {
@@ -107,6 +167,22 @@
             loadParticipants();
         }
 
+        // 切换Tab
+        document.getElementById("tab-signup").addEventListener("click", function() {
+            document.getElementById("tab-signup").classList.add("active");
+            document.getElementById("tab-participants").classList.remove("active");
+            document.getElementById("signup-info").classList.add("active");
+            document.getElementById("participants-info").classList.remove("active");
+        });
+
+        document.getElementById("tab-participants").addEventListener("click", function() {
+            document.getElementById("tab-participants").classList.add("active");
+            document.getElementById("tab-signup").classList.remove("active");
+            document.getElementById("participants-info").classList.add("active");
+            document.getElementById("signup-info").classList.remove("active");
+        });
+
+        // 提交报名
         document.getElementById("signupForm").addEventListener("submit", async function(event) {
             event.preventDefault();
             const name = document.getElementById("name").value.trim();
@@ -117,7 +193,7 @@
 
             document.getElementById("status").innerText = "小助手確認中...";
             try {
-                // 先檢查名稱是否已經報名
+                // 先检查名称是否已报名
                 const checkResponse = await fetch(APP_SCRIPT_URL + "?action=check&name=" + encodeURIComponent(name), {
                     method: "GET",
                 });
@@ -127,7 +203,7 @@
                     return;
                 }
 
-                // 沒有重複的情況，繼續報名
+                // 没有重复的情况，继续报名
                 const response = await fetch(APP_SCRIPT_URL + "?action=add&name=" + encodeURIComponent(name) + "&note=" + encodeURIComponent(note), {
                     method: "GET",
                 });
@@ -144,6 +220,21 @@
             }
         });
 
+        // 取消报名
+        async function cancelRegistration(name) {
+            const response = await fetch(APP_SCRIPT_URL + "?action=remove&name=" + encodeURIComponent(name), {
+                method: "GET",
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                loadParticipants();
+            } else {
+                alert("取消報名失敗！");
+            }
+        }
+
+        // 加载已报名的参与者
         async function loadParticipants() {
             try {
                 const response = await fetch(APP_SCRIPT_URL + "?action=load", {
@@ -156,46 +247,19 @@
                 if (data.participants) {
                     data.participants.forEach((participant, index) => {
                         const listItem = document.createElement("li");
-                        listItem.innerHTML = `${index + 1}. ${participant.name} <button class="cancel-btn" data-name="${participant.name}">取消報名</button>`;
+                        listItem.textContent = `${index + 1}. ${participant.name}`;
+                        const cancelBtn = document.createElement("button");
+                        cancelBtn.className = "cancel-btn";
+                        cancelBtn.textContent = "取消報名";
+                        cancelBtn.onclick = () => cancelRegistration(participant.name);
+                        listItem.appendChild(cancelBtn);
                         list.appendChild(listItem);
-                    });
-
-                    // Add cancel functionality
-                    document.querySelectorAll('.cancel-btn').forEach(button => {
-                        button.addEventListener('click', async function() {
-                            const name = this.dataset.name;
-                            const response = await fetch(APP_SCRIPT_URL + "?action=remove&name=" + encodeURIComponent(name), {
-                                method: "GET",
-                            });
-
-                            const result = await response.json();
-                            if (result.success) {
-                                // Directly remove the participant from the list without popup
-                                this.parentElement.remove();
-                            } else {
-                                alert("取消失敗：" + result.message);
-                            }
-                        });
                     });
                 }
             } catch (error) {
                 document.getElementById("status").innerText = "載入報名名單失敗：" + error.message;
             }
         }
-
-        document.getElementById("tab-signup").addEventListener("click", function() {
-            document.getElementById("signup-info").classList.add("active");
-            document.getElementById("participants-list").classList.remove("active");
-            document.getElementById("tab-signup").classList.add("active");
-            document.getElementById("tab-participants").classList.remove("active");
-        });
-
-        document.getElementById("tab-participants").addEventListener("click", function() {
-            document.getElementById("signup-info").classList.remove("active");
-            document.getElementById("participants-list").classList.add("active");
-            document.getElementById("tab-signup").classList.remove("active");
-            document.getElementById("tab-participants").classList.add("active");
-        });
 
         initLiff();
     </script>
