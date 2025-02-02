@@ -74,8 +74,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             try {
                 let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
                 let result = await response.json();
-                alert(result.message);
-                fetchRegisteredUsers();
+                fetchRegisteredUsers();  // 取消成功後更新已報名者名單
             } catch (error) {
                 console.error("Cancellation failed:", error);
             }
