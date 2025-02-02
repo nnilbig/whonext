@@ -57,7 +57,7 @@
                 });
                 const checkResult = await checkResponse.json();
                 if (checkResult.exists) {
-                    document.getElementById("status").innerText = "該姓名已報名過！";
+                    document.getElementById("status").innerText = "您已報名過了！";
                     return;
                 }
 
