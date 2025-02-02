@@ -6,156 +6,110 @@
     <title>WHONEXT報名小助手</title>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
-        /* 设置整体黑色背景和神秘风格 */
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            padding: 20px; 
-            background-color: #121212; /* 背景为深黑色 */
-            color: #E0E0E0; /* 浅灰色字体，增加对比 */
-            margin: 0;
-            height: 100vh;
-        }
-        
-        h2 {
-            color: #ffffff; /* 标题颜色为白色 */
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* 白色阴影增强神秘感 */
-            margin-bottom: 20px;
-        }
-
-        /* Tab 样式 */
-        .tab-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #444;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* 深黑色背景 */
+            color: white; /* 文字顏色 */
+            text-align: center;
+            padding: 20px;
         }
         .tab {
+            display: inline-block;
+            padding: 10px 20px;
             cursor: pointer;
-            padding: 12px 20px;
-            border: 1px solid #333;
-            background-color: #222;
-            color: #BDBDBD;
-            font-weight: bold;
-            width: 50%;
-            text-align: center;
-            transition: all 0.3s ease;
+            margin: 0 5px;
+            border-radius: 5px;
         }
         .tab.active {
-            background-color: #444;
-            color: #ffffff;
-            border: 1px solid #666;
+            background-color: #D32F2F; /* 鮮紅色 */
+            color: white;
         }
-
-        /* 内容区域 */
-        .content {
-            display: none;
+        .tab.inactive {
+            background-color: #333; /* 深灰色 */
+            color: #bbb;
         }
-        .content.active {
-            display: block;
-        }
-
-        /* 表单输入和按钮 */
         input, button {
             margin: 10px;
-            padding: 12px;
+            padding: 8px;
             width: 80%;
-            background-color: #333;
-            border: 1px solid #444;
-            color: #E0E0E0;
+            box-sizing: border-box; /* 讓input和button寬度一致 */
             border-radius: 5px;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
+            border: 1px solid #333; /* 邊框顏色 */
         }
-
         button {
             font-size: 18px;
-            padding: 15px;
+            background-color: #D32F2F; /* 鮮紅色背景 */
+            color: white;
+            cursor: pointer;
+            border: none;
         }
-
         button:hover {
-            background-color: #555;
+            background-color: #C2185B; /* 淺紅色背景 */
         }
-
-        /* 报名者名单样式 */
-        #participants { 
-            margin-top: 20px; 
-            text-align: left; 
-            display: inline-block; 
-            list-style-type: none; 
+        #participants {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+            list-style-type: none;
             padding-left: 0;
+            width: 80%;
+            border-top: 2px solid #444;
+            padding-top: 10px;
         }
         #participants li {
             margin: 10px 0;
-            background-color: #1E1E1E;
-            padding: 12px;
-            border-radius: 5px;
-            color: #E0E0E0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .cancel-btn {
-            background-color: #f44336;
-            color: white;
-            border: none;
+            color: red;
+            font-size: 20px;
             cursor: pointer;
-            padding: 5px;
-            border-radius: 3px;
         }
-        .cancel-btn:hover {
-            background-color: #d32f2f;
-        }
-
-        /* 事件信息 */
-        #event-info {
-            background-color: #1E1E1E;
-            padding: 20px;
-            border-radius: 10px;
+        .counter {
             margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
         }
-        #event-info p {
-            margin: 10px 0;
+        #signupForm {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .tab-content {
+            display: none;
         }
     </style>
 </head>
 <body>
     <h2>WHONEXT報名小助手</h2>
-    
-    <!-- Tab Section -->
-    <div class="tab-container">
-        <div class="tab active" id="tab-signup">報名資訊</div>
-        <div class="tab" id="tab-participants">已報名者</div>
-    </div>
 
-    <!-- 報名資訊 Tab -->
-    <div class="content active" id="signup-info">
-        <h3>報名資訊</h3>
+    <div class="tab active" id="signupTab" onclick="showTab('signup')">報名資訊</div>
+    <div class="tab inactive" id="participantsTab" onclick="showTab('participants')">已報名者</div>
+
+    <div id="signup" class="tab-content">
         <form id="signupForm">
             <input type="text" id="name" placeholder="姓名" required>
             <input type="text" id="note" placeholder="只有主辦人看見，例如，我只跟帥哥打，謝謝。">
             <button type="submit">我要報名</button>
         </form>
-        <div id="status"></div>
-        <div id="event-info">
-            <p>時間: 2025/02/07 20:00-22:00</p>
-            <p>地點: 大墩羽球大慶館 4號及5號場</p>
-            <p>費用: 早鳥180元，一般價200元</p>
-        </div>
+        <p>時間: 2025/02/07 20:00-22:00</p>
+        <p>地點: 大墩羽球大慶館 4號及5號場</p>
+        <p>費用: 早鳥180元，一般價200元</p>
     </div>
 
-    <!-- 已報名者 Tab -->
-    <div class="content" id="participants-info">
-        <h3>已報名者</h3>
-        <ul id="participants"></ul>
+    <div id="participants" class="tab-content">
+        <h3>已報名名單</h3>
+        <div class="counter" id="counter">目前的人數: 0 / 16</div>
+        <ul id="participantsList"></ul>
     </div>
 
     <script>
-        const LIFF_ID = "2006843080-qeWaGpZA";  // 请替换为您的 LIFF ID
-        const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 您的 Google 试算表 ID
-        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDHMrj9cISj7peci6N2_DGpHuc7zRbs5EaxlGA3BJp1CS90eUe4brROamFhgr_UwiZAg/exec";  // 替换为您的 Google Apps Script URL
+        const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
+        const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
+        const API_KEY = "AIzaSyDUwZDj2yjYQd3_Q53VyCXPRBBxthz0_I4";  // 你的 Google Cloud API Key
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDHMrj9cISj7peci6N2_DGpHuc7zRbs5EaxlGA3BJp1CS90eUe4brROamFhgr_UwiZAg/exec";  // 替換為你的 Google Apps Script URL
 
-        // 初始化LIFF
         async function initLiff() {
             await liff.init({ liffId: LIFF_ID });
             if (liff.isLoggedIn()) {
@@ -167,22 +121,24 @@
             loadParticipants();
         }
 
-        // 切换Tab
-        document.getElementById("tab-signup").addEventListener("click", function() {
-            document.getElementById("tab-signup").classList.add("active");
-            document.getElementById("tab-participants").classList.remove("active");
-            document.getElementById("signup-info").classList.add("active");
-            document.getElementById("participants-info").classList.remove("active");
-        });
+        function showTab(tab) {
+            if (tab === "signup") {
+                document.getElementById("signup").style.display = "block";
+                document.getElementById("participants").style.display = "none";
+                document.getElementById("signupTab").classList.add("active");
+                document.getElementById("signupTab").classList.remove("inactive");
+                document.getElementById("participantsTab").classList.add("inactive");
+                document.getElementById("participantsTab").classList.remove("active");
+            } else if (tab === "participants") {
+                document.getElementById("signup").style.display = "none";
+                document.getElementById("participants").style.display = "block";
+                document.getElementById("signupTab").classList.add("inactive");
+                document.getElementById("signupTab").classList.remove("active");
+                document.getElementById("participantsTab").classList.add("active");
+                document.getElementById("participantsTab").classList.remove("inactive");
+            }
+        }
 
-        document.getElementById("tab-participants").addEventListener("click", function() {
-            document.getElementById("tab-participants").classList.add("active");
-            document.getElementById("tab-signup").classList.remove("active");
-            document.getElementById("participants-info").classList.add("active");
-            document.getElementById("signup-info").classList.remove("active");
-        });
-
-        // 提交报名
         document.getElementById("signupForm").addEventListener("submit", async function(event) {
             event.preventDefault();
             const name = document.getElementById("name").value.trim();
@@ -192,18 +148,8 @@
             const data = { name, note };
 
             document.getElementById("status").innerText = "小助手確認中...";
-            try {
-                // 先检查名称是否已报名
-                const checkResponse = await fetch(APP_SCRIPT_URL + "?action=check&name=" + encodeURIComponent(name), {
-                    method: "GET",
-                });
-                const checkResult = await checkResponse.json();
-                if (checkResult.exists) {
-                    document.getElementById("status").innerText = "您已報名過了！";
-                    return;
-                }
 
-                // 没有重复的情况，继续报名
+            try {
                 const response = await fetch(APP_SCRIPT_URL + "?action=add&name=" + encodeURIComponent(name) + "&note=" + encodeURIComponent(note), {
                     method: "GET",
                 });
@@ -220,21 +166,6 @@
             }
         });
 
-        // 取消报名
-        async function cancelRegistration(name) {
-            const response = await fetch(APP_SCRIPT_URL + "?action=remove&name=" + encodeURIComponent(name), {
-                method: "GET",
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                loadParticipants();
-            } else {
-                alert("取消報名失敗！");
-            }
-        }
-
-        // 加载已报名的参与者
         async function loadParticipants() {
             try {
                 const response = await fetch(APP_SCRIPT_URL + "?action=load", {
@@ -242,22 +173,39 @@
                 });
 
                 const data = await response.json();
-                const list = document.getElementById("participants");
+                const list = document.getElementById("participantsList");
+                const counter = document.getElementById("counter");
                 list.innerHTML = "";
+
                 if (data.participants) {
                     data.participants.forEach((participant, index) => {
                         const listItem = document.createElement("li");
-                        listItem.textContent = `${index + 1}. ${participant.name}`;
-                        const cancelBtn = document.createElement("button");
-                        cancelBtn.className = "cancel-btn";
-                        cancelBtn.textContent = "取消報名";
-                        cancelBtn.onclick = () => cancelRegistration(participant.name);
-                        listItem.appendChild(cancelBtn);
+                        listItem.innerHTML = `${index + 1}. ${participant.name} <span class="cancel-btn" onclick="cancelRegistration('${participant.name}')">X</span>`;
                         list.appendChild(listItem);
                     });
+
+                    // 更新人數統計
+                    counter.textContent = `目前的人數: ${data.participants.length} / 16`;
                 }
             } catch (error) {
                 document.getElementById("status").innerText = "載入報名名單失敗：" + error.message;
+            }
+        }
+
+        async function cancelRegistration(name) {
+            try {
+                const response = await fetch(APP_SCRIPT_URL + "?action=remove&name=" + encodeURIComponent(name), {
+                    method: "GET",
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    loadParticipants();
+                } else {
+                    alert("取消報名失敗");
+                }
+            } catch (error) {
+                alert("取消報名失敗：" + error.message);
             }
         }
 
