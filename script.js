@@ -2,80 +2,82 @@ const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
 const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
 const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWZirhyVq0ypKbhiBXjm64t6efKaPEEQKVk-GQCDIC5F8AhFQNSVGnw7NqCJiLMeNeDw/exec";  // 替換為你的 Google Apps Script URL
 
-document.addEventListener("DOMContentLoaded", () => {
-    initLiff();
-    document.getElementById("signupBtn").addEventListener("click", signup);
-});
+document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
+    
+    tabs.forEach(tab => {
+        tab.addEventListener("click", function () {
+            tabs.forEach(t => t.classList.remove("active"));
+            contents.forEach(c => c.classList.remove("active"));
+            
+            this.classList.add("active");
+            document.getElementById(this.dataset.tab).classList.add("active");
+        });
+    });
 
-async function initLiff() {
-    await liff.init({ liffId: LIFF_ID });
-    if (liff.isLoggedIn()) {
-        const profile = await liff.getProfile();
-        document.getElementById("name").value = profile.displayName;
-    } else {
-        liff.login();
-    }
-    loadParticipants();
-}
+    const form = document.getElementById("register-form");
+    const statusMessage = document.getElementById("status-message");
+    const registeredList = document.getElementById("registered-list");
+    const countSpan = document.getElementById("count");
 
-function switchTab(tabNumber) {
-    document.getElementById("tabContent1").style.display = tabNumber === 1 ? "block" : "none";
-    document.getElementById("tabContent2").style.display = tabNumber === 2 ? "block" : "none";
-    document.getElementById("tab1").classList.toggle("active", tabNumber === 1);
-    document.getElementById("tab2").classList.toggle("active", tabNumber === 2);
-}
-
-async function signup() {
-    const name = document.getElementById("name").value.trim();
-    const note = document.getElementById("note").value.trim();
-    if (!name) return alert("請輸入姓名");
-
-    document.getElementById("signupBtn").disabled = true;
-    try {
-        const response = await fetch(`${APP_SCRIPT_URL}?action=add&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
-        const result = await response.json();
-        if (result.success) {
-            alert("報名成功！");
-            loadParticipants();
-        } else {
-            alert("報名失敗：" + result.message);
-        }
-    } catch (error) {
-        alert("提交失敗：" + error.message);
-    }
-    document.getElementById("signupBtn").disabled = false;
-}
-
-async function loadParticipants() {
-    try {
-        const response = await fetch(`${APP_SCRIPT_URL}?action=load`);
-        const data = await response.json();
-        const list = document.getElementById("participants").querySelector("ul");
-        list.innerHTML = "";
-        if (data.participants) {
-            data.participants.forEach((participant, index) => {
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `${index + 1}. ${participant.name} <button class='cancel-btn' onclick='removeParticipant("${participant.name}")'>取消</button>`;
-                list.appendChild(listItem);
+    async function fetchRegisteredUsers() {
+        try {
+            let response = await fetch(`${APP_SCRIPT_URL}?action=get`);
+            let data = await response.json();
+            registeredList.innerHTML = "";
+            countSpan.textContent = data.length;
+            data.forEach((user, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消報名</button>`;
+                registeredList.appendChild(li);
             });
+        } catch (error) {
+            console.error("Error fetching registered users:", error);
         }
-        document.getElementById("statistics").innerText = `目前的人數: ${data.participants.length} / 16`;
-    } catch (error) {
-        alert("載入報名名單失敗：" + error.message);
     }
-}
 
-async function removeParticipant(name) {
-    try {
-        const response = await fetch(`${APP_SCRIPT_URL}?action=remove&name=${encodeURIComponent(name)}`);
-        const result = await response.json();
-        if (result.success) {
-            alert("取消成功！");
-            loadParticipants();
-        } else {
-            alert("找不到報名記錄！");
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const note = document.getElementById("note").value.trim();
+        if (!name) {
+            statusMessage.textContent = "請輸入姓名！";
+            return;
         }
-    } catch (error) {
-        alert("取消報名失敗：" + error.message);
-    }
-}
+        statusMessage.textContent = "小助手查詢中...";
+        try {
+            let response = await fetch(`${APP_SCRIPT_URL}?action=register`, {
+                method: "POST",
+                body: JSON.stringify({ name, note }),
+                headers: { "Content-Type": "application/json" }
+            });
+            let result = await response.json();
+            statusMessage.textContent = result.message;
+            fetchRegisteredUsers();
+        } catch (error) {
+            console.error("Registration failed:", error);
+            statusMessage.textContent = "報名失敗，請稍後再試！";
+        }
+    });
+
+    registeredList.addEventListener("click", async function (e) {
+        if (e.target.classList.contains("cancel-btn")) {
+            const name = e.target.dataset.name;
+            try {
+                let response = await fetch(`${APP_SCRIPT_URL}?action=cancel`, {
+                    method: "POST",
+                    body: JSON.stringify({ name }),
+                    headers: { "Content-Type": "application/json" }
+                });
+                let result = await response.json();
+                alert(result.message);
+                fetchRegisteredUsers();
+            } catch (error) {
+                console.error("Cancellation failed:", error);
+            }
+        }
+    });
+
+    fetchRegisteredUsers();
+});
