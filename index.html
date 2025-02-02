@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHONEXT</title>
-    <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
@@ -28,40 +27,20 @@
     <script>
         const LIFF_ID = "2006843080-qeWaGpZA";  // 替換為你的 LIFF ID
         const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 替換為你的 Google 試算表 ID
-        const CLIENT_ID = "286698929741-59q4dtn74gdql3f8gv3ui47qhg9si8se.apps.googleusercontent.com";  // 替換為你的 Google OAuth Client ID
         const API_KEY = "AIzaSyDUwZDj2yjYQd3_Q53VyCXPRBBxthz0_I4";  // 你的 Google Cloud API Key
+
         const SHEET_NAME = "報名名單";
         const BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}`;
 
-        let oauthToken;
-
         async function initLiff() {
             await liff.init({ liffId: LIFF_ID });
-
             if (liff.isLoggedIn()) {
                 const profile = await liff.getProfile();
                 document.getElementById("name").value = profile.displayName;
             } else {
                 liff.login();
             }
-
-            // Google OAuth 初始化
-            gapi.load('client:auth2', () => {
-                gapi.auth2.init({
-                    client_id: CLIENT_ID
-                }).then(() => {
-                    const GoogleAuth = gapi.auth2.getAuthInstance();
-                    if (GoogleAuth.isSignedIn.get()) {
-                        oauthToken = GoogleAuth.currentUser.get().getAuthResponse().access_token;
-                        loadParticipants();
-                    } else {
-                        GoogleAuth.signIn().then(() => {
-                            oauthToken = GoogleAuth.currentUser.get().getAuthResponse().access_token;
-                            loadParticipants();
-                        });
-                    }
-                });
-            });
+            loadParticipants();
         }
 
         document.getElementById("signupForm").addEventListener("submit", async function(event) {
@@ -77,10 +56,7 @@
             try {
                 await fetch(`${BASE_URL}:append?valueInputOption=RAW&key=${API_KEY}`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${oauthToken}`
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
                 document.getElementById("status").innerText = "報名成功！";
@@ -106,10 +82,7 @@
 
                 if (foundIndex > 0) {
                     await fetch(`${BASE_URL}!A${foundIndex}:D${foundIndex}?key=${API_KEY}`, {
-                        method: "DELETE",
-                        headers: {
-                            "Authorization": `Bearer ${oauthToken}`
-                        }
+                        method: "DELETE"
                     });
                     document.getElementById("status").innerText = "取消成功！";
                     loadParticipants();
@@ -123,11 +96,7 @@
 
         async function loadParticipants() {
             try {
-                const response = await fetch(`${BASE_URL}!A:B?key=${API_KEY}`, {
-                    headers: {
-                        "Authorization": `Bearer ${oauthToken}`
-                    }
-                });
+                const response = await fetch(`${BASE_URL}!A:B?key=${API_KEY}`);
                 const data = await response.json();
                 const list = document.getElementById("participants");
                 list.innerHTML = "";
