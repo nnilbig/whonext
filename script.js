@@ -3,6 +3,16 @@ const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Goog
 const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiyUHmiwO4ZZItRhNM5Hao7_LJjRbxrytD1VRg_8d7_dOFlQNn0L1_S303wqOzHU5L0A/exec";  // 替換為你的 Google Apps Script URL
 
 document.addEventListener("DOMContentLoaded", function () {
+    // 初始化 LIFF
+    liff.init({ liffId: LIFF_ID })
+        .then(() => {
+            console.log("LIFF 初始化成功!");
+            fetchRegisteredUsers();
+        })
+        .catch((err) => {
+            console.error("LIFF 初始化失敗:", err);
+        });
+
     const tabs = document.querySelectorAll(".tab-btn");
     const contents = document.querySelectorAll(".tab-content");
     
@@ -78,13 +88,4 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-
-    // 在頁面載入時初始化LIFF並加載報名者資料
-    liff.init({ liffId: LIFF_ID })
-        .then(() => {
-            fetchRegisteredUsers();
-        })
-        .catch((err) => {
-            console.error("LIFF 初始化失敗:", err);
-        });
 });
