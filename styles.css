@@ -1,113 +1,125 @@
-/* Reset and general styling */
+/* 全域樣式 */
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    text-align: center;
     margin: 0;
     padding: 0;
-    background-color: #111;
-    color: #eee;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
-h2 {
-    margin-top: 20px;
-    font-size: 24px;
-    font-weight: 700;
-    color: white;
-    text-transform: uppercase;
+/* 主要容器 */
+.container {
+    width: 90%;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #121212;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
-/* Tabs */
+/* 標題 */
+h2, h3 {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* 選項卡（Tabs） */
 .tabs {
     display: flex;
-    width: 100%;
-    justify-content: center;
-    margin-top: 20px;
-    border-bottom: 1px solid #444;
+    justify-content: space-around;
+    margin-bottom: 20px;
 }
 
 .tab {
-    padding: 12px 24px;
+    flex: 1;
+    padding: 10px;
     cursor: pointer;
-    transition: color 0.3s, border-bottom 0.3s;
+    background: #1a1a1a;
+    border: none;
+    color: #ffffff;
     font-size: 16px;
+    font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #bbb;
+    transition: background 0.3s;
 }
 
 .tab.active {
-    color: #fff;
-    border-bottom: 2px solid #777;
+    background: #333;
 }
 
-.tab:hover {
-    color: #ddd;
+/* 表單區塊 */
+.form-group {
+    margin-bottom: 15px;
 }
 
-/* Forms and buttons */
 input, button {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #555;
-    background-color: #222;
-    color: #ddd;
+    padding: 12px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 4px;
     font-size: 16px;
-    text-transform: uppercase;
-    box-sizing: border-box;
+}
+
+input {
+    background: #1a1a1a;
+    color: #ffffff;
+    outline: none;
 }
 
 button {
-    background-color: #444;
-    border: none;
+    background: #444;
+    color: #ffffff;
+    font-weight: bold;
     cursor: pointer;
     transition: background 0.3s;
 }
 
 button:hover {
-    background-color: #666;
+    background: #666;
 }
 
-/* Participant list */
-#participants ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-#participants li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 12px 0;
-    font-size: 16px;
-}
-
-.cancel-btn {
-    color: #888;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.cancel-btn:hover {
-    color: #aaa;
-}
-
-/* Additional elements */
-.event-info, .statistics {
-    font-size: 14px;
+/* 狀態提示 */
+#status {
     margin-top: 10px;
-    text-align: center;
+    font-size: 14px;
+    color: #aaaaaa;
 }
 
-.statistics {
-    font-weight: bold;
+/* 報名者列表 */
+.participants-container {
+    text-align: left;
     margin-top: 20px;
 }
 
-#signupForm {
-    max-width: 500px;
-    text-align: center;
+.participant {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.participant .remove-btn {
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.participant .remove-btn:hover {
+    background: #555;
+}
+
+/* 報名人數統計 */
+#participant-count {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
 }
