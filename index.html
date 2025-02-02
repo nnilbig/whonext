@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WHONEXT</title>
+    <title>WHONEXT報名小助手</title>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <h2>WHONEXT</h2>
+    <h2>WHONEXT報名小助手</h2>
     <form id="signupForm">
         <input type="text" id="name" placeholder="姓名" required>
         <input type="text" id="note" placeholder="只有主辦人看見，例如，我只跟正妹打，謝謝。">
@@ -25,12 +25,10 @@
     <ul id="participants"></ul>
 
     <script>
-        const LIFF_ID = "2006843080-qeWaGpZA";  // 替換為你的 LIFF ID
-        const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 替換為你的 Google 試算表 ID
+        const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
+        const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
         const API_KEY = "AIzaSyDUwZDj2yjYQd3_Q53VyCXPRBBxthz0_I4";  // 你的 Google Cloud API Key
-
-        const SHEET_NAME = "報名名單";
-        const BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}`;
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDcysf4W_d6I7Dr8vLxW_3XIvQBN3DZeQPIT398T_NEV73frlulClnw-g4CxcT-D9Y/exec";  // 替換為你的 Google Apps Script URL
 
         async function initLiff() {
             await liff.init({ liffId: LIFF_ID });
@@ -49,18 +47,21 @@
             const note = document.getElementById("note").value.trim();
             if (!name) return alert("請輸入姓名");
 
-            const now = new Date().toLocaleString();
-            const data = { values: [[name, note, now]] };
+            const data = { name, note };
 
             document.getElementById("status").innerText = "提交中...";
             try {
-                await fetch(`${BASE_URL}:append?valueInputOption=RAW&key=${API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
+                const response = await fetch(APP_SCRIPT_URL + "?action=add&name=" + encodeURIComponent(name) + "&note=" + encodeURIComponent(note), {
+                    method: "GET",
                 });
-                document.getElementById("status").innerText = "報名成功！";
-                loadParticipants();
+
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById("status").innerText = "報名成功！";
+                    loadParticipants();
+                } else {
+                    document.getElementById("status").innerText = "報名失敗：" + result.message;
+                }
             } catch (error) {
                 document.getElementById("status").innerText = "提交失敗：" + error.message;
             }
@@ -72,22 +73,16 @@
 
             document.getElementById("status").innerText = "取消中...";
             try {
-                const response = await fetch(`${BASE_URL}?key=${API_KEY}`);
-                const data = await response.json();
-                let foundIndex = -1;
-                let values = data.values || [];
-                values.forEach((row, index) => {
-                    if (row[0] === name) foundIndex = index + 1;
+                const response = await fetch(APP_SCRIPT_URL + "?action=remove&name=" + encodeURIComponent(name), {
+                    method: "GET",
                 });
 
-                if (foundIndex > 0) {
-                    await fetch(`${BASE_URL}!A${foundIndex}:D${foundIndex}?key=${API_KEY}`, {
-                        method: "DELETE"
-                    });
+                const result = await response.json();
+                if (result.success) {
                     document.getElementById("status").innerText = "取消成功！";
                     loadParticipants();
                 } else {
-                    document.getElementById("status").innerText = "找不到該報名記錄！";
+                    document.getElementById("status").innerText = "找不到報名記錄！";
                 }
             } catch (error) {
                 document.getElementById("status").innerText = "取消失敗：" + error.message;
@@ -96,14 +91,17 @@
 
         async function loadParticipants() {
             try {
-                const response = await fetch(`${BASE_URL}!A:B?key=${API_KEY}`);
+                const response = await fetch(APP_SCRIPT_URL + "?action=load", {
+                    method: "GET",
+                });
+
                 const data = await response.json();
                 const list = document.getElementById("participants");
                 list.innerHTML = "";
-                if (data.values) {
-                    data.values.slice(1).forEach((row, index) => {
+                if (data.participants) {
+                    data.participants.forEach((participant, index) => {
                         const listItem = document.createElement("li");
-                        listItem.textContent = `${index + 1}. ${row[0]}`;
+                        listItem.textContent = `${index + 1}. ${participant.name}`;
                         list.appendChild(listItem);
                     });
                 }
