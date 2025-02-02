@@ -1,41 +1,41 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WHONEXT報名小助手</title>
+    <title>報名小幫手</title>
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
 </head>
 <body>
     <div class="container">
-        <h2>WHONEXT報名小助手</h2>
+        <h1>報名小幫手</h1>
         <div class="tabs">
-            <button class="tab-button active" data-tab="signup">報名資訊</button>
-            <button class="tab-button" data-tab="participants">已報名者</button>
+            <button class="tab-btn active" data-tab="registration">報名資訊</button>
+            <button class="tab-btn" data-tab="registered">已報名者</button>
         </div>
         
-        <div id="signup" class="tab-content active">
-           
-            <form id="signupForm">
-                <input type="text" id="name" placeholder="whonext" required>
-                <input type="text" id="note" placeholder="備註，例如:我要打十個，謝謝。">
-                <button type="submit">我要報名</button>
-            </form>
-            <p id="status" class="status-message"></p>
-            
+        <div id="registration" class="tab-content active">
             <div class="event-info">
-              <p>時間：2025/02/07 20:00-22:00</p>
-              <p>場地：大墩羽球大慶館 4號及5號場</p>
-              <p>費用：早鳥180元，一般價200元</p>
+                <p><strong>時間：</strong>2025年2月7日 20:00-22:00</p>
+                <p><strong>場地：</strong>大墩大慶館 4號及5號場</p>
+                <p><strong>費用：</strong>早鳥價180TWD 一般價 200TWD</p>
             </div>
-        
+            <form id="register-form">
+                <label for="name">姓名 *</label>
+                <input type="text" id="name" name="name" required placeholder="whonext">
+                
+                <label for="note">備註</label>
+                <input type="text" id="note" name="note" placeholder="備註，例如:我要打十個，謝謝。">
+                
+                <button type="submit" id="register-btn">我要報名</button>
+                <p id="status-message"></p>
+            </form>
         </div>
         
-        <div id="participants" class="tab-content">
-            <p id="participant-count">目前已報名人數：0 / 16</p>
-            <ul id="participant-list"></ul>
+        <div id="registered" class="tab-content">
+            <h2>已報名者 (<span id="count">0</span>/16)</h2>
+            <ul id="registered-list"></ul>
         </div>
     </div>
 </body>
