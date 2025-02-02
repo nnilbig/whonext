@@ -6,17 +6,22 @@
     <title>WHONEXT報名小助手</title>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        body { font-family: Arial, sans-serif; padding: 20px; }
         input, button { margin: 10px; padding: 8px; width: 80%; }
+        .tabs { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .tab { cursor: pointer; padding: 10px 20px; background-color: #f1f1f1; border: 1px solid #ddd; }
+        .tab.active { background-color: #ccc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
         #participants { 
             margin-top: 20px; 
             text-align: left; 
             display: inline-block; 
-            list-style-type: none; /* 移除圓點 */
-            padding-left: 0; /* 移除左側縮排 */
+            list-style-type: none;
+            padding-left: 0;
         }
         #participants li {
-            margin: 5px 0; /* 增加項目間的間距 */
+            margin: 5px 0; 
         }
     </style>
 </head>
@@ -24,17 +29,34 @@
     <h2>WHONEXT報名小助手</h2>
     <p>時間: 2025/02/07 20:00-22:00</p>
     <p>地點: 大墩羽球大慶館 4號及5號場</p>
-    <p>費用: 早鳥180元，一般價200元 </p>
-    <form id="signupForm">
-        <input type="text" id="name" placeholder="姓名" required>
-        <input type="text" id="note" placeholder="可備註(只有主辦人看見，例如，我只跟帥哥打，謝謝。)">
-        <button type="submit">我要報名</button>
-        <button type="button" id="cancelBtn">取消報名</button>
-    </form>
-    <p id="status"></p>
+    <p>費用: 早鳥180元，一般價200元</p>
 
-    <h3>報名成功</h3>
-    <ul id="participants"></ul>
+    <!-- Tab navigation -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab(0)">報名資訊</div>
+        <div class="tab" onclick="showTab(1)">報名成功的名單</div>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content active" id="signup-info">
+        <form id="signupForm">
+            <input type="text" id="name" placeholder="姓名" required>
+            <input type="text" id="note" placeholder="可備註(只有主辦人看見，例如，我只跟帥哥打，謝謝。)">
+            <button type="submit">我要報名</button>
+            <button type="button" id="cancelBtn">取消報名</button>
+        </form>
+        <p id="status"></p>
+
+        <h3>報名的資訊</h3>
+        <p>時間: 2025/02/07 20:00-22:00</p>
+        <p>地點: 大墩羽球大慶館 4號及5號場</p>
+        <p>費用: 早鳥180元，一般價200元</p>
+    </div>
+
+    <div class="tab-content" id="participants-list">
+        <h3>報名成功的名單</h3>
+        <ul id="participants"></ul>
+    </div>
 
     <script>
         const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
@@ -63,7 +85,6 @@
 
             document.getElementById("status").innerText = "小助手確認中...";
             try {
-                // 先檢查名稱是否已經報名
                 const checkResponse = await fetch(APP_SCRIPT_URL + "?action=check&name=" + encodeURIComponent(name), {
                     method: "GET",
                 });
@@ -73,7 +94,6 @@
                     return;
                 }
 
-                // 沒有重複的情況，繼續報名
                 const response = await fetch(APP_SCRIPT_URL + "?action=add&name=" + encodeURIComponent(name) + "&note=" + encodeURIComponent(note), {
                     method: "GET",
                 });
@@ -124,7 +144,7 @@
                 if (data.participants) {
                     data.participants.forEach((participant, index) => {
                         const listItem = document.createElement("li");
-                        listItem.textContent = `${index + 1}. ${participant.name}`;
+                        listItem.innerHTML = `${index + 1}. ${participant.name} <button onclick="cancelSignup('${participant.name}')">取消報名</button>`;
                         list.appendChild(listItem);
                     });
                 }
@@ -133,7 +153,7 @@
             }
         }
 
-        initLiff();
-    </script>
-</body>
-</html>
+        async function cancelSignup(name) {
+            document.getElementById("status").innerText = "取消中...";
+            try {
+       
