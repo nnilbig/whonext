@@ -5,99 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>活動報名</title>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         input, button { margin: 10px; padding: 8px; width: 80%; }
-        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
-        th, td { border: 1px solid black; padding: 10px; text-align: left; }
+        #participants { margin-top: 20px; text-align: left; display: inline-block; }
     </style>
 </head>
 <body>
     <h2>活動報名</h2>
     <form id="signupForm">
         <input type="text" id="name" placeholder="姓名" required>
-        <input type="text" id="note" placeholder="備註 (例如: 我只跟正妹打，謝謝)">
+        <input type="text" id="note" placeholder="只有主辦人看見，例如，我只跟正妹打，謝謝。">
         <button type="submit">提交報名</button>
+        <button type="button" id="cancelBtn">取消報名</button>
     </form>
     <p id="status"></p>
 
-    <h2>報名名單</h2>
-    <table>
-        <thead>
-            <tr><th>姓名</th><th>備註</th></tr>
-        </thead>
-        <tbody id="participants"></tbody>
-    </table>
+    <h3>已報名名單</h3>
+    <ul id="participants"></ul>
 
     <script>
-        const LIFF_ID = "2006843080-qeWaGpZA";  // 修改為你的 LIFF ID
-        const API_KEY = "AIzaSyDUwZDj2yjYQd3_Q53VyCXPRBBxthz0_I4";  // 修改為你的 Google Sheets API Key
-        const SPREADSHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 修改為你的 Google Sheets ID
-        const RANGE = "報名名單!A:C";  // 設定存取範圍
+        const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
+        const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
+        const API_KEY = "AIzaSyDUwZDj2yjYQd3_Q53VyCXPRBBxthz0_I4";  // 你的 Google Cloud API Key
+
+        const SHEET_NAME = "報名名單";
+        const BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}`;
 
         async function initLiff() {
             await liff.init({ liffId: LIFF_ID });
-
             if (liff.isLoggedIn()) {
                 const profile = await liff.getProfile();
                 document.getElementById("name").value = profile.displayName;
             } else {
                 liff.login();
             }
-        }
-
-        function initGoogleSheetsAPI() {
-            gapi.client.init({ apiKey: API_KEY, discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"] })
-                .then(() => loadParticipants());
-        }
-
-        function loadParticipants() {
-            gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: SPREADSHEET_ID,
-                range: RANGE
-            }).then(response => {
-                const rows = response.result.values || [];
-                const tbody = document.getElementById("participants");
-                tbody.innerHTML = "";
-                rows.forEach(row => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `<td>${row[0]}</td><td>${row[1] || ""}</td>`;
-                    tbody.appendChild(tr);
-                });
-            }).catch(error => {
-                document.getElementById("status").innerText = "載入報名名單失敗";
-                console.error(error);
-            });
+            loadParticipants();
         }
 
         document.getElementById("signupForm").addEventListener("submit", async function(event) {
             event.preventDefault();
-            const name = document.getElementById("name").value;
-            const note = document.getElementById("note").value;
-            const data = { values: [[name, note]] };
+            const name = document.getElementById("name").value.trim();
+            const note = document.getElementById("note").value.trim();
+            if (!name) return alert("請輸入姓名");
+
+            const now = new Date().toLocaleString();
+            const data = { values: [[name, note, now]] };
 
             document.getElementById("status").innerText = "提交中...";
-
-            gapi.client.sheets.spreadsheets.values.append({
-                spreadsheetId: SPREADSHEET_ID,
-                range: RANGE,
-                valueInputOption: "RAW",
-                resource: data
-            }).then(() => {
+            try {
+                await fetch(`${BASE_URL}:append?valueInputOption=RAW&key=${API_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
                 document.getElementById("status").innerText = "報名成功！";
                 loadParticipants();
-            }).catch(error => {
-                document.getElementById("status").innerText = "提交失敗";
-                console.error(error);
-            });
+            } catch (error) {
+                document.getElementById("status").innerText = "提交失敗：" + error.message;
+            }
         });
 
-        window.onload = function() {
-            liff.init({ liffId: LIFF_ID }).then(() => initLiff());
-            gapi.load("client", initGoogleSheetsAPI);
-        };
+        document.getElementById("cancelBtn").addEventListener("click", async function() {
+            const name = document.getElementById("name").value.trim();
+            if (!name) return alert("請輸入姓名以取消報名");
+
+            document.getElementById("status").innerText = "取消中...";
+            try {
+                const response = await fetch(`${BASE_URL}?key=${API_KEY}`);
+                const data = await response.json();
+                let foundIndex = -1;
+                let values = data.values || [];
+                values.forEach((row, index) => {
+                    if (row[0] === name) foundIndex = index + 1;
+                });
+
+                if (foundIndex > 0) {
+                    await fetch(`${BASE_URL}!A${foundIndex}:D${foundIndex}?key=${API_KEY}`, {
+                        method: "DELETE"
+                    });
+                    document.getElementById("status").innerText = "取消成功！";
+                    loadParticipants();
+                } else {
+                    document.getElementById("status").innerText = "找不到該報名記錄！";
+                }
+            } catch (error) {
+                document.getElementById("status").innerText = "取消失敗：" + error.message;
+            }
+        });
+
+        async function loadParticipants() {
+            try {
+                const response = await fetch(`${BASE_URL}!A:B?key=${API_KEY}`);
+                const data = await response.json();
+                const list = document.getElementById("participants");
+                list.innerHTML = "";
+                if (data.values) {
+                    data.values.slice(1).forEach((row, index) => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = `${index + 1}. ${row[0]}`;
+                        list.appendChild(listItem);
+                    });
+                }
+            } catch (error) {
+                document.getElementById("status").innerText = "載入報名名單失敗：" + error.message;
+            }
+        }
+
+        initLiff();
     </script>
 </body>
 </html>
-
