@@ -3,7 +3,6 @@ const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Goog
 const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyaNV3HCAOnqJmg918LI-Hfov9vpHfx24GcNOeZiHZTEjKlCc0H__Z7lJlQ1FYYmz3lsA/exec";  // 替換為你的 Google Apps Script URL
 
 document.addEventListener("DOMContentLoaded", async function () {
-
     // 初始化 LIFF 並使用 await
     try {
         await liff.init({ liffId: LIFF_ID });
@@ -61,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
             let result = await response.json();
             statusMessage.textContent = result.message;
-            fetchRegisteredUsers();
+            fetchRegisteredUsers();  // 重新獲取已報名者
         } catch (error) {
             console.error("Registration failed:", error);
             statusMessage.textContent = "報名失敗，請稍後再試！";
