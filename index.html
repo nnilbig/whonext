@@ -48,7 +48,7 @@
                     method: "POST",
                     body: JSON.stringify(data),
                     headers: { "Content-Type": "application/json" },
-                    mode: 'cors'  // 指定使用 CORS
+                    mode: 'no-cors'  // 指定使用 CORS
                 });
 
                 if (response.ok) {
