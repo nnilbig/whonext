@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHONEXT小助手</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- 引入 LIFF SDK -->
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.0/sdk.js"></script> <!-- 加載 LIFF SDK -->
+    <script defer src="script.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>報名小幫手</h1>
+        <h1>WHONEXT小助手</h1>
         <div class="tabs">
             <button class="tab-btn active" data-tab="registration">報名資訊</button>
             <button class="tab-btn" data-tab="registered">已報名者</button>
@@ -39,7 +39,5 @@
             <ul id="registered-list"></ul>
         </div>
     </div>
-    <!-- 加載腳本 -->
-    <script defer src="script.js"></script>
 </body>
 </html>
