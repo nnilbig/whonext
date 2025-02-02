@@ -8,20 +8,64 @@
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         input, button { margin: 10px; padding: 8px; width: 80%; }
+        #participants { width: 80%; margin: 20px auto; border-collapse: collapse; }
+        #participants th, #participants td { padding: 8px 12px; border: 1px solid #ddd; }
+        #participants th { background-color: #f4f4f4; }
+        .tab { padding: 10px; cursor: pointer; }
+        .tab-content { display: none; }
+        .active-tab { background-color: #f4f4f4; }
+        .active-content { display: block; }
     </style>
 </head>
 <body>
     <h2>活動報名</h2>
-    <form id="signupForm">
-        <input type="text" id="name" placeholder="姓名" required>
-        <input type="text" id="note" placeholder="備註 (只有主辦人可以看見 例如:我只跟正妹打，謝謝)">
-        <button type="submit">提交報名</button>
-    </form>
-    <p id="status"></p>
+
+    <!-- 分頁導航 -->
+    <div>
+        <div class="tab active-tab" onclick="showTab('signupForm')">報名表單</div>
+        <div class="tab" onclick="showTab('participantList')">報名名單</div>
+    </div>
+
+    <!-- 報名表單區 -->
+    <div id="signupForm" class="tab-content active-content">
+        <form id="signupForm">
+            <input type="text" id="name" placeholder="姓名" required>
+            <input type="text" id="note" placeholder="備註 (只有主辦人可以看見 例如:我只跟正妹打，謝謝)">
+            <button type="submit">提交報名</button>
+        </form>
+        <p id="status"></p>
+    </div>
+
+    <!-- 報名名單區 -->
+    <div id="participantList" class="tab-content">
+        <h3>目前已報名的人</h3>
+        <table id="participants">
+            <thead>
+                <tr>
+                    <th>姓名</th>
+                    <th>備註</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
     <script>
         const LIFF_ID = "2006843080-qeWaGpZA";  // 修改為你的 LIFF ID
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCGmfAFX4DjMZmIZq2fmnccVL7RdVjrMWRuWXRHIYrW0NpzAXdfNeFC9RGxouvKPUxUg/exec";  // 修改為你的 API
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4Obrfm26amD3PXavHiesSVVpM40-hgAmgoQrTPFqGbUuI4ZsCxO249SFAg8SwVWIh/exec";  // 修改為你的 API
+
+        // 顯示相對應的分頁
+        function showTab(tabId) {
+            const allTabs = document.querySelectorAll('.tab-content');
+            const allNavs = document.querySelectorAll('.tab');
+
+            allTabs.forEach(tab => tab.classList.remove('active-content'));
+            allNavs.forEach(nav => nav.classList.remove('active-tab'));
+
+            document.getElementById(tabId).classList.add('active-content');
+            const activeNav = Array.from(allNavs).find(nav => nav.textContent === tabId === 'signupForm' ? '報名表單' : '報名名單');
+            activeNav.classList.add('active-tab');
+        }
 
         async function initLiff() {
             await liff.init({ liffId: LIFF_ID });
@@ -51,15 +95,43 @@
                     body: JSON.stringify(data)
                 });
 
-                // 因為使用了 no-cors 模式，無法檢查 response.ok，這裡無法處理回應
                 document.getElementById("status").innerText = "報名成功！";
+                loadParticipants();  // 重新加載報名名單
                 setTimeout(() => { liff.closeWindow(); }, 2000);
             } catch (error) {
                 document.getElementById("status").innerText = "錯誤：" + error.message;
             }
         });
 
-        initLiff();
+        async function loadParticipants() {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const participants = await response.json();
+
+                const tableBody = document.querySelector("#participants tbody");
+                tableBody.innerHTML = '';  // 清空表格
+
+                participants.forEach((participant) => {
+                    const row = document.createElement("tr");
+                    const nameCell = document.createElement("td");
+                    const noteCell = document.createElement("td");
+
+                    nameCell.textContent = participant.name;
+                    noteCell.textContent = participant.note;
+
+                    row.appendChild(nameCell);
+                    row.appendChild(noteCell);
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("載入報名名單失敗", error);
+            }
+        }
+
+        window.onload = () => {
+            initLiff();
+            loadParticipants();  // 頁面加載時先顯示報名名單
+        };
     </script>
 </body>
 </html>
