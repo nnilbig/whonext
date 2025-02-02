@@ -17,10 +17,12 @@
             padding: 10px;
             border: 1px solid #ccc;
             width: 45%;
+            font-weight: bold;
         }
         .tab.active {
             background-color: #4CAF50;
             color: white;
+            border: 1px solid #4CAF50;
         }
         .content {
             display: none;
@@ -32,6 +34,10 @@
             margin: 10px;
             padding: 8px;
             width: 80%;
+        }
+        button {
+            font-size: 18px;  /* Increase button size */
+            padding: 12px;
         }
         #participants { 
             margin-top: 20px; 
@@ -67,15 +73,17 @@
     <!-- 報名資訊 Tab -->
     <div class="content active" id="signup-info">
         <h3>報名資訊</h3>
-        <p>時間: 2025/02/07 20:00-22:00</p>
-        <p>地點: 大墩羽球大慶館 4號及5號場</p>
-        <p>費用: 早鳥180元，一般價200元</p>
         <form id="signupForm">
             <input type="text" id="name" placeholder="姓名" required>
             <input type="text" id="note" placeholder="只有主辦人看見，例如，我只跟帥哥打，謝謝。">
             <button type="submit">我要報名</button>
         </form>
-        <p id="status"></p>
+        <div id="status"></div>
+        <div id="event-info">
+            <p>時間: 2025/02/07 20:00-22:00</p>
+            <p>地點: 大墩羽球大慶館 4號及5號場</p>
+            <p>費用: 早鳥180元，一般價200元</p>
+        </div>
     </div>
 
     <!-- 已報名者 Tab -->
@@ -162,8 +170,8 @@
 
                             const result = await response.json();
                             if (result.success) {
-                                alert("取消成功");
-                                loadParticipants();
+                                // Directly remove the participant from the list without popup
+                                this.parentElement.remove();
                             } else {
                                 alert("取消失敗：" + result.message);
                             }
