@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>活動報名</title>
+    <title>WHONEXT報名</title>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <h2>WHONEXT報名</h2>
+    <h2>活動報名</h2>
     
     <!-- 報名表單 -->
     <form id="signupForm">
@@ -31,7 +31,7 @@
 
     <script>
         const LIFF_ID = "2006843080-qeWaGpZA";  // 修改為你的 LIFF ID
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2pZa6D_rbWNCNfKw-3mjCD3Xyp10BG7FQd1btxIoD0LKspDOM-rE4t7EQ8CXDFLczcw/exec";  // 修改為你的 API
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCGmfAFX4DjMZmIZq2fmnccVL7RdVjrMWRuWXRHIYrW0NpzAXdfNeFC9RGxouvKPUxUg/exec";  // 修改為你的 API
 
         // 初始化 LIFF
         async function initLiff() {
@@ -60,13 +60,17 @@
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    mode: 'no-cors',  // 使用 no-cors 模式
+                    mode: 'cors',  // 使用 CORS 模式
                     body: JSON.stringify(data)
                 });
 
-                document.getElementById("status").innerText = "報名成功！";
-                setTimeout(() => { liff.closeWindow(); }, 2000);  // 2秒後關閉 LIFF 視窗
-                loadParticipants();  // 重新載入報名名單
+                if (response.ok) {
+                    document.getElementById("status").innerText = "報名成功！";
+                    setTimeout(() => { liff.closeWindow(); }, 2000);  // 2秒後關閉 LIFF 視窗
+                    loadParticipants();  // 重新載入報名名單
+                } else {
+                    document.getElementById("status").innerText = "提交失敗，請重試！";
+                }
             } catch (error) {
                 document.getElementById("status").innerText = "錯誤：" + error.message;
             }
@@ -75,7 +79,7 @@
         // 載入報名名單
         async function loadParticipants() {
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL + "?action=getParticipants", { method: "GET" });
+                const response = await fetch(GOOGLE_SCRIPT_URL + "?action=getParticipants", { method: "GET", mode: 'cors' });
                 if (!response.ok) throw new Error('無法載入報名名單');
 
                 const participants = await response.json();
