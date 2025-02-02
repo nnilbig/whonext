@@ -1,6 +1,6 @@
 const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
 const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
-const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDHMrj9cISj7peci6N2_DGpHuc7zRbs5EaxlGA3BJp1CS90eUe4brROamFhgr_UwiZAg/exec";  // 替換為你的 Google Apps Script URL
+const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwBOVrVpx7Weihfr4E_9wrm48EElc27gMxdzcDxk6_hK-XlXsEIlDpNBsK9Xqkn32PfUA/exec";  // 替換為你的 Google Apps Script URL
 
 async function initLiff() {
     await liff.init({ liffId: LIFF_ID });
