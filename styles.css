@@ -4,7 +4,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #111;
-    color: #fff;
+    color: #eee;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,7 +24,7 @@ h2 {
     width: 100%;
     justify-content: center;
     margin-top: 20px;
-    border-bottom: 2px solid #333;
+    border-bottom: 1px solid #444;
 }
 
 .tab {
@@ -34,38 +34,40 @@ h2 {
     font-size: 16px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    color: #bbb;
 }
 
 .tab.active {
-    color: #D32F2F; /* Red active color */
-    border-bottom: 2px solid #D32F2F;
+    color: #fff;
+    border-bottom: 2px solid #777;
 }
 
 .tab:hover {
-    color: #fff;
+    color: #ddd;
 }
 
-/* Forms and button */
+/* Forms and buttons */
 input, button {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
-    border: 1px solid #444;
-    background-color: #333;
-    color: #fff;
+    border: 1px solid #555;
+    background-color: #222;
+    color: #ddd;
     font-size: 16px;
     text-transform: uppercase;
     box-sizing: border-box;
 }
 
 button {
-    background-color: #D32F2F;
+    background-color: #444;
     border: none;
     cursor: pointer;
+    transition: background 0.3s;
 }
 
 button:hover {
-    background-color: #C62828;
+    background-color: #666;
 }
 
 /* Participant list */
@@ -84,13 +86,13 @@ button:hover {
 }
 
 .cancel-btn {
-    color: #D32F2F;
+    color: #888;
     cursor: pointer;
     font-weight: bold;
 }
 
 .cancel-btn:hover {
-    color: #C62828;
+    color: #aaa;
 }
 
 /* Additional elements */
