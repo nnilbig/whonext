@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const statusMessage = document.getElementById("status-message");
     const registeredList = document.getElementById("registered-list");
     const countSpan = document.getElementById("count");
+    const countRegisteredSpan = document.getElementById("count-registered");
 
     // 獲取已報名者的函數
     async function fetchRegisteredUsers() {
@@ -36,7 +37,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             let response = await fetch(`${APP_SCRIPT_URL}?action=get`);
             let data = await response.json();
             registeredList.innerHTML = "";
-            countSpan.textContent = data.length;
+            countRegisteredSpan.textContent = data.length;
+            countSpan.textContent = data.length;  // 同步顯示目前報名人數
             data.forEach((user, index) => {
                 let li = document.createElement("li");
                 li.innerHTML = `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消報名</button>`;
