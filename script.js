@@ -2,16 +2,21 @@ const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
 const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
 const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiyUHmiwO4ZZItRhNM5Hao7_LJjRbxrytD1VRg_8d7_dOFlQNn0L1_S303wqOzHU5L0A/exec";  // 替換為你的 Google Apps Script URL
 
-document.addEventListener("DOMContentLoaded", function () {
-    // 初始化 LIFF
-    liff.init({ liffId: LIFF_ID })
-        .then(() => {
-            console.log("LIFF 初始化成功!");
-            fetchRegisteredUsers();
-        })
-        .catch((err) => {
-            console.error("LIFF 初始化失敗:", err);
-        });
+document.addEventListener("DOMContentLoaded", async function () {
+    // 檢查 liff 是否加載成功
+    if (typeof liff === 'undefined') {
+        console.error("LIFF SDK 加載失敗");
+        return;
+    }
+
+    // 初始化 LIFF 並使用 await
+    try {
+        await liff.init({ liffId: LIFF_ID });
+        console.log("LIFF 初始化成功!");
+        fetchRegisteredUsers();  // 成功初始化後，獲取已報名者資料
+    } catch (err) {
+        console.error("LIFF 初始化失敗:", err);
+    }
 
     const tabs = document.querySelectorAll(".tab-btn");
     const contents = document.querySelectorAll(".tab-content");
@@ -31,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const registeredList = document.getElementById("registered-list");
     const countSpan = document.getElementById("count");
 
+    // 獲取已報名者的函數
     async function fetchRegisteredUsers() {
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=get`);
