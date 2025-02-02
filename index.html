@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -5,43 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHONEXT報名小助手</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script defer src="script.js"></script>
 </head>
 <body>
-
-    <h2>WHONEXT報名小助手</h2>
-
-    <!-- Tabs -->
-    <div class="tabs">
-        <div id="tab1" class="tab active" onclick="switchTab(1)">報名資訊</div>
-        <div id="tab2" class="tab" onclick="switchTab(2)">已報名者</div>
-    </div>
-
-    <!-- 報名資訊 Tab -->
-    <div id="tabContent1" class="tabContent">
-        <div id="signupForm">
-            <input type="text" id="name" placeholder="姓名" required>
-            <input type="text" id="note" placeholder="備註 (不顯示，例如:我要打十個，謝謝)">
-            <button id="signupBtn">我要報名</button>
+    <div class="container">
+        <h2>WHONEXT報名小助手</h2>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="signup">報名資訊</button>
+            <button class="tab-button" data-tab="participants">已報名者</button>
         </div>
-
-        <div class="event-info">
-            <p>時間：2025/02/07 20:00-22:00</p>
-            <p>場地：大墩羽球大慶館 4號及5號場</p>
-            <p>費用：早鳥180元，一般價200元</p>
+        
+        <div id="signup" class="tab-content active">
+           
+            <form id="signupForm">
+                <input type="text" id="name" placeholder="whonext" required>
+                <input type="text" id="note" placeholder="備註，例如:我要打十個，謝謝。">
+                <button type="submit">我要報名</button>
+            </form>
+            <p id="status" class="status-message"></p>
+            
+            <div class="event-info">
+              <p>時間：2025/02/07 20:00-22:00</p>
+              <p>場地：大墩羽球大慶館 4號及5號場</p>
+              <p>費用：早鳥180元，一般價200元</p>
+            </div>
+        
         </div>
-    </div>
-
-    <!-- 已報名者 Tab -->
-    <div id="tabContent2" class="tabContent" style="display:none;">
-        <div id="participants">
-            <ul></ul>
-        </div>
-        <div class="statistics" id="statistics">
-            目前的人數: 0 / 16
+        
+        <div id="participants" class="tab-content">
+            <p id="participant-count">目前已報名人數：0 / 16</p>
+            <ul id="participant-list"></ul>
         </div>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
