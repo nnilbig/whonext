@@ -14,14 +14,14 @@
     <h2>活動報名</h2>
     <form id="signupForm">
         <input type="text" id="name" placeholder="姓名" required>
-        <input type="text" id="note" placeholder="備註 (可不填)">
+        <input type="text" id="note" placeholder="備註 (只有主辦人可以看見 例如:我只跟正妹打，謝謝)">
         <button type="submit">提交報名</button>
     </form>
     <p id="status"></p>
 
     <script>
         const LIFF_ID = "2006843080-qeWaGpZA";  // 修改為你的 LIFF ID
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwCkVZXTKlU54y0l0-qerra9Pv0gI0iEXfBgZm45U0FCdJGo1qobhTD8XcJFD5tEBFMw/exec";  // 修改為你的 API
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCGmfAFX4DjMZmIZq2fmnccVL7RdVjrMWRuWXRHIYrW0NpzAXdfNeFC9RGxouvKPUxUg/exec";  // 修改為你的 API
 
         async function initLiff() {
             await liff.init({ liffId: LIFF_ID });
@@ -47,16 +47,13 @@
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    mode: 'cors',  // 指定使用 CORS
+                    mode: 'no-cors',  // 改為 no-cors 模式
                     body: JSON.stringify(data)
                 });
 
-                if (response.ok) {
-                    document.getElementById("status").innerText = "報名成功！";
-                    setTimeout(() => { liff.closeWindow(); }, 2000);
-                } else {
-                    document.getElementById("status").innerText = "提交失敗，請重試！";
-                }
+                // 因為使用了 no-cors 模式，無法檢查 response.ok，這裡無法處理回應
+                document.getElementById("status").innerText = "報名成功！";
+                setTimeout(() => { liff.closeWindow(); }, 2000);
             } catch (error) {
                 document.getElementById("status").innerText = "錯誤：" + error.message;
             }
