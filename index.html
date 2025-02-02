@@ -1,72 +1,67 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <title>報名系統</title>
-  <script src="https://static.line-scdn.net/liff/2.1/sdk.js"></script>
-  <script>
-    window.onload = function () {
-      // 使用你的 LIFF ID
-      liff.init({ liffId: "2006843080-qeWaGpZA" })
-        .then(() => {
-          if (liff.isLoggedIn()) {
-            document.getElementById("loginBtn").style.display = "none";
-            document.getElementById("form").style.display = "block";
-          } else {
-            liff.login();
-          }
-        })
-        .catch((err) => console.error("LIFF初始化錯誤", err));
-    };
-
-    function submitForm() {
-      const name = document.getElementById("name").value;
-      const note = document.getElementById("note").value;
-
-      if (!name) {
-        alert("姓名為必填項目!");
-        return;
-      }
-
-      const url = "https://script.google.com/macros/s/AKfycby3ASCVrlh6VZfkfDy9aY5IpjBtYtObUSlQTkKdVwcK6lrOeL1LiMHA9fHnyHGyWogu/exec";  // 填入你的 Web 應用 URL
-      const data = {
-        name: name,
-        note: note
-      };
-
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: new URLSearchParams(data)
-      })
-      .then(response => response.json())
-      .then(result => {
-        alert("報名成功！");
-        document.getElementById("form").reset();
-      })
-      .catch(error => {
-        alert("報名失敗，請再試一次！");
-        console.error("Error:", error);
-      });
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活動報名</title>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input, button { margin: 10px; padding: 8px; width: 80%; }
+    </style>
 </head>
 <body>
-  <div id="loginBtn" style="display: block;">
-    <button onclick="liff.login()">使用LINE登入</button>
-  </div>
-
-  <div id="form" style="display: none;">
-    <h2>報名表單</h2>
-    <form onsubmit="event.preventDefault(); submitForm();">
-      <label for="name">姓名:</label><br>
-      <input type="text" id="name" required><br>
-      <label for="note">備註 (非必填):</label><br>
-      <textarea id="note"></textarea><br><br>
-      <button type="submit">提交報名</button>
+    <h2>活動報名</h2>
+    <form id="signupForm">
+        <input type="text" id="name" placeholder="姓名" required>
+        <input type="text" id="note" placeholder="備註 (可不填)">
+        <button type="submit">提交報名</button>
     </form>
-  </div>
+    <p id="status"></p>
+
+    <script>
+        const LIFF_ID = "2006843080-qeWaGpZA";  // 修改為你的 LIFF ID
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQWC_taqM30hJSEv2F1ihy38WCK8KJW_g6vYPF8Zk8-Q7OFIr3BC1lUm8uPuEmCGwy/exec";  // 修改為你的 API
+
+        async function initLiff() {
+            await liff.init({ liffId: LIFF_ID });
+
+            if (liff.isLoggedIn()) {
+                const profile = await liff.getProfile();
+                document.getElementById("name").value = profile.displayName;
+            } else {
+                liff.login();
+            }
+        }
+
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const note = document.getElementById("note").value;
+            const data = { name, note };
+
+            document.getElementById("status").innerText = "提交中...";
+            
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                if (response.ok) {
+                    document.getElementById("status").innerText = "報名成功！";
+                    setTimeout(() => { liff.closeWindow(); }, 2000);
+                } else {
+                    document.getElementById("status").innerText = "提交失敗，請重試！";
+                }
+            } catch (error) {
+                document.getElementById("status").innerText = "錯誤：" + error.message;
+            }
+        });
+
+        initLiff();
+    </script>
 </body>
 </html>
