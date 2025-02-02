@@ -156,4 +156,32 @@
         async function cancelSignup(name) {
             document.getElementById("status").innerText = "取消中...";
             try {
-       
+                const response = await fetch(APP_SCRIPT_URL + "?action=remove&name=" + encodeURIComponent(name), {
+                    method: "GET",
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById("status").innerText = "取消成功！";
+                    loadParticipants();
+                } else {
+                    document.getElementById("status").innerText = "找不到報名記錄！";
+                }
+            } catch (error) {
+                document.getElementById("status").innerText = "取消失敗：" + error.message;
+            }
+        }
+
+        function showTab(index) {
+            const tabs = document.querySelectorAll(".tab");
+            const contents = document.querySelectorAll(".tab-content");
+            tabs.forEach((tab, i) => {
+                tab.classList.toggle("active", i === index);
+                contents[i].classList.toggle("active", i === index);
+            });
+        }
+
+        initLiff();
+    </script>
+</body>
+</html>
