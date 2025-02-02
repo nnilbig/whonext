@@ -236,14 +236,13 @@
 
         async function removeParticipant(index) {
             try {
-                const response = await fetch(APP_SCRIPT_URL + "?action=remove&index=" + encodeURIComponent(index), {
+                const response = await fetch(APP_SCRIPT_URL + "?action=remove&index=" + index, {
                     method: "GET",
                 });
 
                 const result = await response.json();
                 if (result.success) {
-                    alert("取消成功！");
-                    loadParticipants();
+                    loadParticipants(); // 更新報名名單
                 } else {
                     alert("取消報名失敗：" + result.message);
                 }
@@ -252,5 +251,6 @@
             }
         }
     </script>
+
 </body>
 </html>
