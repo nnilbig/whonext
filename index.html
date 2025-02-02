@@ -46,9 +46,10 @@
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: "POST",
+                    mode: 'cors',  // 指定使用 CORS
                     body: JSON.stringify(data),
-                    headers: { "Content-Type": "application/json" },
-                    mode: 'no-cors'  // 指定使用 CORS
+                    headers: { "Content-Type": "application/json" }
+                    
                 });
 
                 if (response.ok) {
