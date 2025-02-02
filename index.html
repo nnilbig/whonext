@@ -51,6 +51,17 @@
 
             document.getElementById("status").innerText = "提交中...";
             try {
+                // 先檢查名稱是否已經報名
+                const checkResponse = await fetch(APP_SCRIPT_URL + "?action=check&name=" + encodeURIComponent(name), {
+                    method: "GET",
+                });
+                const checkResult = await checkResponse.json();
+                if (checkResult.exists) {
+                    document.getElementById("status").innerText = "該姓名已報名過！";
+                    return;
+                }
+
+                // 沒有重複的情況，繼續報名
                 const response = await fetch(APP_SCRIPT_URL + "?action=add&name=" + encodeURIComponent(name) + "&note=" + encodeURIComponent(note), {
                     method: "GET",
                 });
