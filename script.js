@@ -3,6 +3,11 @@ const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Goog
 const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyaNV3HCAOnqJmg918LI-Hfov9vpHfx24GcNOeZiHZTEjKlCc0H__Z7lJlQ1FYYmz3lsA/exec";  // 替換為你的 Google Apps Script URL
 
 document.addEventListener("DOMContentLoaded", async function () {
+    // 檢查 liff 是否加載成功
+    if (typeof liff === 'undefined') {
+        console.error("LIFF SDK 加載失敗");
+        return;
+    }
 
     // 初始化 LIFF 並使用 await
     try {
@@ -34,13 +39,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     // 獲取已報名者的函數
     async function fetchRegisteredUsers() {
         try {
-            let response = await fetch(${APP_SCRIPT_URL}?action=get);
+            let response = await fetch(`${APP_SCRIPT_URL}?action=get`);
             let data = await response.json();
             registeredList.innerHTML = "";
             countSpan.textContent = data.length;
             data.forEach((user, index) => {
                 let li = document.createElement("li");
-                li.innerHTML = ${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消報名</button>;
+                li.innerHTML = `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消報名</button>`;
                 registeredList.appendChild(li);
             });
         } catch (error) {
@@ -58,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
         statusMessage.textContent = "小助手協助中...";
         try {
-            let response = await fetch(${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)});
+            let response = await fetch(`${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
             let result = await response.json();
             statusMessage.textContent = result.message;
             fetchRegisteredUsers();
@@ -72,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (e.target.classList.contains("cancel-btn")) {
             const name = e.target.dataset.name;
             try {
-                let response = await fetch(${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)});
+                let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
                 let result = await response.json();
                 fetchRegisteredUsers();  // 取消成功後更新已報名者名單
             } catch (error) {
@@ -80,4 +85,4 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         }
     });
-});  
+});
