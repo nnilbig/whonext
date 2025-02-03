@@ -85,34 +85,26 @@ document.addEventListener("DOMContentLoaded", async function () {
     // 取消報名處理
     registeredList.addEventListener("click", async function (e) {
         if (e.target.classList.contains("cancel-btn")) {
-            const cancelButton = e.target;
-            const name = cancelButton.dataset.name;
+            const name = e.target.dataset.name;
     
-            // 禁用取消按鈕，顯示「正在處理中」
-            cancelButton.disabled = true;
-            cancelButton.innerHTML = "處理中...";  // 變更按鈕文字為處理中
+            // 彈出確認對話框
+            const isConfirmed = window.confirm(`確定要取消 ${name} 的報名嗎？`);
     
-            try {
-                let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
-                let result = await response.json();
-                
-                      
-                // 取消成功後更新已報名者名單
-                cancelButton.innerHTML = "取消成功";  // 變更按鈕文字為處理中
-                fetchRegisteredUsers(); 
+            if (isConfirmed) {
+                try {
+                    // 發送取消報名請求
+                    let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
+                    let result = await response.json();
     
-            } catch (error) {
-                console.error("Cancellation failed:", error);
-                alert("取消報名失敗，請稍後再試！");
-            } finally {
-                // 只有在處理錯誤時，才會重設按鈕
-                if (cancelButton.disabled) {
-                    cancelButton.disabled = false;
-                    cancelButton.innerHTML = "取消";  // 重設按鈕文字為「取消」
+                    // 成功後更新已報名者名單
+                    fetchRegisteredUsers();
+                } catch (error) {
+                    console.error("Cancellation failed:", error);
                 }
             }
         }
     });
+
 
 
 });
