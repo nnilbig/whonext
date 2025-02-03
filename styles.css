@@ -67,14 +67,20 @@ input:focus {
 }
 
 button {
-    background: #444;
-    color: #fff;
+    background: #C89F60; /* 金色背景 */
+    color: white; /* 白色文字 */
     cursor: pointer;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
     transition: 0.3s;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(200, 159, 96, 0.3); /* 金色的阴影 */
 }
 
 button:hover {
-    background: #666;
+    background: #D9B77D; /* 更亮的金色 */
+    box-shadow: 0 0 15px rgba(217, 183, 125, 0.5); /* 更亮的金色阴影 */
 }
 
 #registered-list {
