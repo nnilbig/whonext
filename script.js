@@ -81,18 +81,36 @@ document.addEventListener("DOMContentLoaded", async function () {
             statusMessage.textContent = "報名失敗，請稍後再試！";
         }
     });
-
+    
     // 取消報名處理
     registeredList.addEventListener("click", async function (e) {
         if (e.target.classList.contains("cancel-btn")) {
-            const name = e.target.dataset.name;
+            const cancelButton = e.target;
+            const name = cancelButton.dataset.name;
+    
+            // 禁用取消按鈕，顯示正在處理
+            cancelButton.disabled = true;
+            cancelButton.innerHTML = "處理中...";
+    
             try {
                 let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
                 let result = await response.json();
-                fetchRegisteredUsers();  // 取消成功後更新已報名者名單
+                
+                // 更新已報名者名單
+                fetchRegisteredUsers(); 
+    
+                // 顯示取消成功訊息（可考慮用某種提示框顯示，或直接在狀態欄顯示）
+                alert("取消成功");  // 可根據需求改為自訂顯示方式
+    
             } catch (error) {
                 console.error("Cancellation failed:", error);
+                alert("取消報名失敗，請稍後再試！");
+            } finally {
+                // 取消後重設按鈕，避免重複點擊
+                cancelButton.disabled = false;
+                cancelButton.innerHTML = "取消";
             }
         }
     });
+
 });
