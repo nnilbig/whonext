@@ -53,6 +53,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
+    // 取得可用次數的函數
+    async function fetchAvailableCredits() {
+        try {
+            let response = await fetch(`${APP_SCRIPT_URL}?action=getCredits`);
+            let data = await response.json();
+            creditsList.innerHTML = "";
+            data.forEach((user, index) => {
+                if (user.credits > 1) {  // 只顯示次數大於 1 的名單
+                    let li = document.createElement("li");
+                    li.textContent = `${index + 1}. ${user.name} (${user.credits} 次)`;
+                    creditsList.appendChild(li);
+                }
+            });
+        } catch (error) {
+            console.error("Error fetching available credits:", error);
+        }
+    }
+
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
         const name = document.getElementById("name").value.trim();
