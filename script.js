@@ -86,24 +86,28 @@ document.addEventListener("DOMContentLoaded", async function () {
     registeredList.addEventListener("click", async function (e) {
         if (e.target.classList.contains("cancel-btn")) {
             const name = e.target.dataset.name;
+            
+            // 顯示「正在處理中」訊息
+            const processingMessage = document.getElementById("processing-message");
+            processingMessage.style.display = "block";  // 顯示處理中訊息
     
-            // 彈出確認對話框
-            const isConfirmed = window.confirm(`確定要取消 ${name} 的報名嗎？`);
+            try {
+                // 發送取消報名請求
+                let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
+                let result = await response.json();
     
-            if (isConfirmed) {
-                try {
-                    // 發送取消報名請求
-                    let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
-                    let result = await response.json();
+                // 取消成功後更新已報名者名單
+                fetchRegisteredUsers();
     
-                    // 成功後更新已報名者名單
-                    fetchRegisteredUsers();
-                } catch (error) {
-                    console.error("Cancellation failed:", error);
-                }
+                // 隱藏「正在處理中」訊息
+                processingMessage.style.display = "none";
+            } catch (error) {
+                console.error("Cancellation failed:", error);
+                processingMessage.style.display = "none";  // 發生錯誤時隱藏訊息
             }
         }
     });
+
 
 
 
