@@ -1,3 +1,7 @@
+const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
+const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
+const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzWAOMOr_tkg0hO_X21IIFYi2ir2nnTil1vGn-tQHxbMAOIgwyZocQ69Au936_7K2ByA/exec";  // 替換為你的 Google Apps Script URL
+
 document.addEventListener("DOMContentLoaded", async function () {
     const tabs = document.querySelectorAll(".tab-btn");
     const contents = document.querySelectorAll(".tab-content");
@@ -32,13 +36,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     });
 
-    // 頁面加載時即刻獲取已報名人數
-    await fetchRegisteredUsers();
-
     // 獲取已報名者名單
     async function fetchRegisteredUsers() {
         await fetchDataAndRenderList(`${APP_SCRIPT_URL}?action=get`, registeredList, (data) => {
-            countSpan.textContent = data.length;  // 顯示已報名人數
+            countSpan.textContent = data.length;
             return data.map((user, index) => `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消報名</button>`);
         });
     }
@@ -74,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
             let result = await response.json();
             statusMessage.textContent = result.message;
-            fetchRegisteredUsers();  // 更新已報名人數和名單
+            fetchRegisteredUsers();
         } catch (error) {
             console.error("Registration failed:", error);
             statusMessage.textContent = "報名失敗，請稍後再試！";
