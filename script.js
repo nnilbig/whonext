@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     const statusMessage = document.getElementById("status-message");
     const registeredList = document.getElementById("registered-list");
     const countSpan = document.getElementById("count");
-    const creditsList = document.getElementById("credits-list");
 
     // 檢查 LIFF SDK 是否加載成功
     if (typeof liff === 'undefined') {
@@ -42,14 +41,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         await fetchDataAndRenderList(`${APP_SCRIPT_URL}?action=get`, registeredList, (data) => {
             countSpan.textContent = data.length;
             return data.map((user, index) => `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消報名</button>`);
-        });
-    }
-
-    // 獲取可用次數並更新列表
-    async function fetchAvailableCredits() {
-        await fetchDataAndRenderList(`${APP_SCRIPT_URL}?action=getCredits`, creditsList, (data) => {
-            return data.filter(user => user.credits > 1)
-                       .map((user, index) => `${index + 1}. ${user.name} (${user.credits} 次)`);
         });
     }
 
