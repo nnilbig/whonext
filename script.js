@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     async function fetchRegisteredUsers() {
         await fetchDataAndRenderList(`${APP_SCRIPT_URL}?action=get`, registeredList, (data) => {
             countSpan.textContent = data.length;
-            return data.map((user, index) => `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消報名</button>`);
+            return data.map((user, index) => `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消</button>`);
         });
     }
 
