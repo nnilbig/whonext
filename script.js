@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     const statusMessage = document.getElementById("status-message");
     const registeredList = document.getElementById("registered-list");
     const countSpan = document.getElementById("count");
+    const creditsList = document.getElementById("credits-list");
+
 
     // 獲取已報名者的函數
     async function fetchRegisteredUsers() {
@@ -53,12 +55,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // 取得可用次數的函數
+    // 獲取可用次數的函數
     async function fetchAvailableCredits() {
+        const creditsList = document.getElementById("credits-list");  // 確保取得 credits-list 元素
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=getCredits`);
             let data = await response.json();
-            creditsList.innerHTML = "";
+            creditsList.innerHTML = "";  // 清空列表
             data.forEach((user, index) => {
                 if (user.credits > 1) {  // 只顯示次數大於 1 的名單
                     let li = document.createElement("li");
