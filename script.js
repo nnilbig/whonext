@@ -96,7 +96,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
                 let result = await response.json();
                 
+                      
                 // 取消成功後更新已報名者名單
+                cancelButton.innerHTML = "取消成功";  // 變更按鈕文字為處理中
                 fetchRegisteredUsers(); 
     
             } catch (error) {
