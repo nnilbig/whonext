@@ -38,9 +38,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // 獲取已報名者名單
     async function fetchRegisteredUsers() {
-        await fetchDataAndRenderList(`${APP_SCRIPT_URL}?action=get`, registeredList, (data) => {
+        await fetchDataAndRenderList(${APP_SCRIPT_URL}?action=get, registeredList, (data) => {
             countSpan.textContent = data.length;
-            return data.map((user, index) => `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消</button>`);
+            return data.map((user, index) => ${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消</button>);
         });
     }
 
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 listElement.appendChild(li);
             });
         } catch (error) {
-            console.error(`Error fetching data from ${url}:`, error);
+            console.error(Error fetching data from ${url}:, error);
         }
     }
 
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
         statusMessage.textContent = "小助手協助中...";
         try {
-            let response = await fetch(`${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
+            let response = await fetch(${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)});
             let result = await response.json();
             statusMessage.textContent = result.message;
             fetchRegisteredUsers();
@@ -85,20 +85,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     // 取消報名處理
     registeredList.addEventListener("click", async function (e) {
         if (e.target.classList.contains("cancel-btn")) {
-            const cancelButton = e.target;
-            const originalText = cancelButton.textContent; // 保存原本的按鈕文字
-            cancelButton.textContent = "請稍等..."; // 改為「請稍等」
-    
-            const name = cancelButton.dataset.name;
+            const name = e.target.dataset.name;
             try {
-                let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
+                let response = await fetch(${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)});
                 let result = await response.json();
                 fetchRegisteredUsers();  // 取消成功後更新已報名者名單
             } catch (error) {
                 console.error("Cancellation failed:", error);
-            } finally {
-                cancelButton.textContent = originalText; // 恢復按鈕的原文字
             }
         }
     });
-});
+});  
