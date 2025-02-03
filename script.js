@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             statusMessage.textContent = "請輸入姓名！";
             return;
         }
-        statusMessage.textContent = "小助手協助中...";
+        statusMessage.textContent = "小助手登記中...";
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
             let result = await response.json();
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             
             // 取得按鈕並更改文本為「處理中」
             const cancelBtn = e.target;
-            cancelBtn.textContent = "處理中...";  // 顯示「處理中」
+            cancelBtn.textContent = "小助手處理中...";  // 顯示「處理中」
     
             try {
                 // 發送取消報名請求
