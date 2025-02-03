@@ -1,0 +1,137 @@
+/* 🎮 Gameboy 風格字體 */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Minecraftia&display=swap');
+
+body {
+    background: #1B1B1B; /* Gameboy 黑色背景 */
+    color: #E0E0D8; /* 復古灰白色 */
+    font-family: 'Minecraftia', 'Press Start 2P', Arial, sans-serif;
+    text-align: center;
+    text-transform: uppercase;
+    image-rendering: pixelated;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🎮 Gameboy 風標題 */
+h1, h2, h3 {
+    color: #FDD400; /* 復古低飽和黃色 */
+    background: #2F2F2F; /* 深灰色背景 */
+    display: inline-block;
+    padding: 10px;
+    border: 4px solid #B85331; /* 復古橘紅 */
+    margin: 15px auto;
+    font-size: 18px;
+}
+
+/* 📦 主容器 */
+.container {
+    max-width: 320px; /* Gameboy 的解析度 */
+    margin: auto;
+    padding: 15px;
+    border: 4px solid #85AE8B; /* 復古墨綠色 */
+    background: #2A2A2A; /* 深灰背景 */
+}
+
+/* 🎮 Tabs 設計 */
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.tab-btn {
+    width: 50%;
+    background: #3A3A3A; /* 暗灰 */
+    color: #FDD400; /* 復古黃 */
+    padding: 10px;
+    border: 4px solid #85AE8B; /* 墨綠 */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.tab-btn.active {
+    background: #85AE8B; /* 低飽和墨綠 */
+    color: #1B1B1B; /* 深黑色 */
+}
+
+/* 🔥 Tab 內容 */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ⚙️ 表單 */
+form {
+    background: #01535F; /* 復古青藍 */
+    padding: 15px;
+    border: 4px solid #FDD400; /* 復古黃 */
+}
+
+/* 🔩 輸入框 */
+input {
+    background: #2F2F2F; /* 深灰背景 */
+    color: #FDD400; /* 復古黃 */
+    padding: 10px;
+    border: 4px solid #B85331; /* 橘紅色邊框 */
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Minecraftia', 'Press Start 2P';
+    box-sizing: border-box;
+}
+
+/* 🎮 按鈕 */
+button {
+    background: #B85331; /* 復古橘紅 */
+    color: #FFF;
+    padding: 10px;
+    border: 4px solid #FDD400; /* 復古黃 */
+    cursor: pointer;
+    font-family: 'Minecraftia', 'Press Start 2P';
+    font-size: 14px;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #FDD400; /* 復古亮黃 */
+    color: #1B1B1B;
+}
+
+/* 🎮 已報名名單 */
+#registered-list {
+    list-style: none;
+    padding: 0;
+    background: #333; /* 深灰 */
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+#registered-list li {
+    background: #01535F; /* 復古青藍 */
+    margin: 5px 0;
+    padding: 8px;
+    border: 4px solid #FDD400; /* 復古黃 */
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* ⚔️ 取消報名按鈕 */
+.cancel-btn {
+    background: #85AE8B; /* 復古墨綠 */
+    color: white;
+    padding: 6px;
+    border: 4px solid #B85331; /* 橘紅 */
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background: #FDD400;
+    color: #1B1B1B;
+}
