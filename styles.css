@@ -101,3 +101,32 @@ button:hover {
     border-radius: 5px;
     cursor: pointer;
 }
+
+#credits-list {
+    list-style: none;
+    padding: 0;
+}
+
+#credits-list li {
+    background: #222; /* 深色背景，與已報名者一致 */
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    font-size: 18px;
+}
+
+.credits-count {
+    background: #FFD700; /* 金色強調 */
+    color: #222;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    min-width: 40px;
+    text-align: center;
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.6);
+}
+
