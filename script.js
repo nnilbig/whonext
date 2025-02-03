@@ -85,13 +85,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     // 取消報名處理
     registeredList.addEventListener("click", async function (e) {
         if (e.target.classList.contains("cancel-btn")) {
-            const name = e.target.dataset.name;
+            const cancelButton = e.target;
+            const originalText = cancelButton.textContent; // 保存原本的按鈕文字
+            cancelButton.textContent = "請稍等..."; // 改為「請稍等」
+    
+            const name = cancelButton.dataset.name;
             try {
                 let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
                 let result = await response.json();
                 fetchRegisteredUsers();  // 取消成功後更新已報名者名單
             } catch (error) {
                 console.error("Cancellation failed:", error);
+            } finally {
+                cancelButton.textContent = originalText; // 恢復按鈕的原文字
             }
         }
     });
