@@ -12,6 +12,42 @@ body {
     padding: 0;
 }
 
+/* 🎮 8-bit 風格載入畫面 */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85); /* 深色背景 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-box {
+    background: #2A2A2A; /* 深灰背景 */
+    padding: 20px;
+    border: 6px solid #C4A200; /* 復古黃邊框 */
+    text-align: center;
+    font-family: 'Minecraftia', 'Press Start 2P';
+    image-rendering: pixelated;
+}
+
+.loading-text {
+    font-size: 16px;
+    color: #E0E0D8; /* 復古灰白色 */
+    animation: blink-animation 0.8s infinite alternate;
+}
+
+/* 8-bit 閃爍動畫 */
+@keyframes blink-animation {
+    0% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+
 /* 🎮 Gameboy 風標題 */
 h1, h2, h3 {
     color: #C4A200; /* 復古低飽和黃色 */
