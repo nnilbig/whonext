@@ -44,6 +44,10 @@ body {
     100% { opacity: 0.5; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 }
 
+h1, h2, h3 {
+    color: #C89F60; /* 金色文字 */    
+}
+
 .container {
     max-width: 600px;
     margin: auto;
