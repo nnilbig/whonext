@@ -28,10 +28,10 @@
         
         <div id="registration" class="tab-content active">
             <form id="register-form">
-                <label for="name">NAME *</label>
+                <label for="name">姓名 *</label>
                 <input type="text" id="name" name="name" required placeholder="YOUR NAME">
                 
-                <label for="note">NOTE</label>
+                <label for="note">備註</label>
                 <input type="text" id="note" name="note" placeholder="YOUR NOTE">
                 <label></label>
                 <button type="submit" id="register-btn">ENTRY</button>
@@ -45,6 +45,9 @@
         </div>     
         <div id="registered" class="tab-content">
             <ul id="registered-list"></ul>
+        </div>
+        <div id="quota" class="tab-content">
+            <ul id="quota-list"></ul> <!-- 這裡會由 JS 渲染可用次數列表 -->
         </div>
     </div>  
 </body>
