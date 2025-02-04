@@ -1,5 +1,5 @@
-const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
-const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
+const LIFF_ID = "2006843080-qeWaGpZA";  // 替換為你的 LIFF ID
+const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // Google 試算表 ID
 const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6evAMTVVxWeJSZOTX7sm47uTYLF4Wq4C5V5lUc9n6qJzfkzUvLQJdRVoqB9K_om5wsw/exec";  // 替換為你的 Google Apps Script URL
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         await liff.init({ liffId: LIFF_ID });
         console.log("LIFF 初始化成功!");
         fetchRegisteredUsers();  // 初始化後獲取已報名者資料
+        fetchQuota();  // 初始化時也載入可用次數
     } catch (err) {
         console.error("LIFF 初始化失敗:", err);
     }
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const statusMessage = document.getElementById("status-message");
     const registeredList = document.getElementById("registered-list");
     const countSpan = document.getElementById("count");
+    const quotaList = document.getElementById("quota-list");
 
     // 🎮 顯示載入畫面
     function showLoading() {
@@ -62,17 +64,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             hideLoading(); // 🎯 名單更新完後再隱藏載入畫面
         }
     }
-    
+
+    // 🎮 獲取可用次數
     async function fetchQuota() {
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=quota`);
             let data = await response.json();
             quotaList.innerHTML = "";
+
             data.records.forEach(user => {
                 let li = document.createElement("li");
                 li.innerHTML = `${user.name} <span style="color: #C89F60; font-weight: bold;">(${user.count})</span>`;
                 quotaList.appendChild(li);
             });
+
         } catch (error) {
             console.error("Error fetching quota:", error);
             quotaList.innerHTML = "<p style='color: red;'>無法獲取可用次數，請稍後再試。</p>";
@@ -96,11 +101,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
             let result = await response.json();
             statusMessage.textContent = result.message;
-            fetchRegisteredUsers(); // 🎯 成功後更新名單，載入畫面會在 `fetchRegisteredUsers()` 完成後自動隱藏
+            fetchRegisteredUsers(); // 🎯 成功後更新名單
         } catch (error) {
             console.error("Registration failed:", error);
             statusMessage.textContent = "404，TRY AGAIN LATER！";
-            hideLoading(); // 🎯 若請求失敗，立即隱藏載入畫面
+        } finally {
+            hideLoading();
         }
     });
 
@@ -112,10 +118,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             try {
                 let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
                 let result = await response.json();
-                fetchRegisteredUsers(); // 🎯 成功後更新名單，載入畫面會在 `fetchRegisteredUsers()` 完成後自動隱藏
+                fetchRegisteredUsers(); // 🎯 成功後更新名單
             } catch (error) {
                 console.error("Cancellation failed:", error);
-                hideLoading(); // 🎯 若請求失敗，立即隱藏載入畫面
+            } finally {
+                hideLoading();
             }
         }
     });
