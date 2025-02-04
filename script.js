@@ -1,31 +1,24 @@
 const LIFF_ID = "2006843080-qeWaGpZA";  // 請替換為你的 LIFF ID
 const SHEET_ID = "121VE_IpIOdySED21vF1at56qguIDBTHVRrqltG1MWog";  // 你的 Google 試算表 ID
-const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhSjZ6qgk900dd8_iIu98ECFRQMeQgBeatVWR_aXy4QFZ2kzEQgTivXXyp1M9ourDN-g/exec";  // 替換為你的 Google Apps Script URL
+const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxdCtKE01avIIk8m-DS8vbQEv1Ii7epHB2b8Zd_6ucoIlf8dmyaNz-BAc9iENooh5cEOg/exec";  // 替換為你的 Google Apps Script URL
 
 document.addEventListener("DOMContentLoaded", async function () {
-    const tabs = document.querySelectorAll(".tab-btn");
-    const contents = document.querySelectorAll(".tab-content");
-    const form = document.getElementById("register-form");
-    const statusMessage = document.getElementById("status-message");
-    const registeredList = document.getElementById("registered-list");
-    const countSpan = document.getElementById("count");
-
-    // 檢查 LIFF SDK 是否加載成功
     if (typeof liff === 'undefined') {
         console.error("LIFF SDK 加載失敗");
         return;
     }
 
-    // 初始化 LIFF
     try {
         await liff.init({ liffId: LIFF_ID });
         console.log("LIFF 初始化成功!");
-        fetchRegisteredUsers();  // 成功初始化後，獲取已報名者資料
+        fetchRegisteredUsers();  // 初始化後獲取已報名者資料
     } catch (err) {
         console.error("LIFF 初始化失敗:", err);
     }
 
-    // 切換 Tab
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
+
     tabs.forEach(tab => {
         tab.addEventListener("click", function () {
             tabs.forEach(t => t.classList.remove("active"));
@@ -36,76 +29,76 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     });
 
-    // 獲取已報名者名單
-    async function fetchRegisteredUsers() {
-        await fetchDataAndRenderList(`${APP_SCRIPT_URL}?action=get`, registeredList, (data) => {
-            countSpan.textContent = data.length;
-            return data.map((user, index) => `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>取消</button>`);
-        });
+    const form = document.getElementById("register-form");
+    const statusMessage = document.getElementById("status-message");
+    const registeredList = document.getElementById("registered-list");
+    const countSpan = document.getElementById("count");
+
+    // 🎮 顯示載入畫面
+    function showLoading() {
+        document.getElementById("loading-overlay").style.display = "flex";
     }
 
-    // 通用資料獲取與列表渲染函數
-    async function fetchDataAndRenderList(url, listElement, renderCallback) {
+    // 🎮 隱藏載入畫面
+    function hideLoading() {
+        document.getElementById("loading-overlay").style.display = "none";
+    }
+
+    // 🎮 獲取已報名者的函數
+    async function fetchRegisteredUsers() {
         try {
-            let response = await fetch(url);
+            let response = await fetch(`${APP_SCRIPT_URL}?action=get`);
             let data = await response.json();
-            listElement.innerHTML = "";
-            const listItems = renderCallback(data);
-            listItems.forEach(item => {
+            registeredList.innerHTML = "";
+            countSpan.textContent = data.length;
+            data.forEach((user, index) => {
                 let li = document.createElement("li");
-                li.innerHTML = item;
-                listElement.appendChild(li);
+                li.innerHTML = `${index + 1}. ${user.name} <button class='cancel-btn' data-name='${user.name}'>CANCEL</button>`;
+                registeredList.appendChild(li);
             });
         } catch (error) {
-            console.error(`Error fetching data from ${url}:`, error);
+            console.error("Error fetching registered users:", error);
+        } finally {
+            hideLoading(); // 🎯 名單更新完後再隱藏載入畫面
         }
     }
 
-    // 表單提交處理
+    // 🎮 提交報名
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
         const name = document.getElementById("name").value.trim();
         const note = document.getElementById("note").value.trim();
         if (!name) {
-            statusMessage.textContent = "請輸入姓名！";
+            statusMessage.textContent = "ENTER YOUR NAME!";
             return;
         }
-        statusMessage.textContent = "小助手登記中...";
+        statusMessage.textContent = "CHECK...";
+        showLoading();
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
             let result = await response.json();
             statusMessage.textContent = result.message;
-            fetchRegisteredUsers();
+            fetchRegisteredUsers(); // 🎯 成功後更新名單，載入畫面會在 `fetchRegisteredUsers()` 完成後自動隱藏
         } catch (error) {
             console.error("Registration failed:", error);
-            statusMessage.textContent = "報名失敗，請稍後再試！";
-        }
-    });
-    
-   // 取消報名處理
-    registeredList.addEventListener("click", async function (e) {
-        if (e.target.classList.contains("cancel-btn")) {
-            const name = e.target.dataset.name;
-            
-            // 取得按鈕並更改文本為「處理中」
-            const cancelBtn = e.target;
-            cancelBtn.textContent = "小助手處理中...";  // 顯示「處理中」
-    
-            try {
-                // 發送取消報名請求
-                let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
-                let result = await response.json();
-    
-                // 取消成功後更新已報名者名單
-                fetchRegisteredUsers();
-    
-            } catch (error) {
-                console.error("Cancellation failed:", error);
-                // 發生錯誤時將按鈕恢復原來的文本
-                cancelBtn.textContent = "取消失敗";
-                cancelBtn.textContent = "取消";
-            }
+            statusMessage.textContent = "404，TRY AGAIN LATER！";
+            hideLoading(); // 🎯 若請求失敗，立即隱藏載入畫面
         }
     });
 
+    // 🎮 取消報名
+    registeredList.addEventListener("click", async function (e) {
+        if (e.target.classList.contains("cancel-btn")) {
+            const name = e.target.dataset.name;
+            showLoading();
+            try {
+                let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
+                let result = await response.json();
+                fetchRegisteredUsers(); // 🎯 成功後更新名單，載入畫面會在 `fetchRegisteredUsers()` 完成後自動隱藏
+            } catch (error) {
+                console.error("Cancellation failed:", error);
+                hideLoading(); // 🎯 若請求失敗，立即隱藏載入畫面
+            }
+        }
+    });
 });
