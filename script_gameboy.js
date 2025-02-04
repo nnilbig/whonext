@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // 🎮 獲取已報名者的函數
     async function fetchRegisteredUsers() {
-        showLoading();
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=get`);
             let data = await response.json();
@@ -60,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         } catch (error) {
             console.error("Error fetching registered users:", error);
         } finally {
-            hideLoading();
+            hideLoading(); // 🎯 名單更新完後再隱藏載入畫面
         }
     }
 
@@ -73,18 +72,17 @@ document.addEventListener("DOMContentLoaded", async function () {
             statusMessage.textContent = "ENTER YOUR NAME!";
             return;
         }
-        statusMessage.textContent = "CHECKING...";
+        statusMessage.textContent = "CHECK...";
         showLoading();
         try {
             let response = await fetch(`${APP_SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
             let result = await response.json();
             statusMessage.textContent = result.message;
-            fetchRegisteredUsers();
+            fetchRegisteredUsers(); // 🎯 成功後更新名單，載入畫面會在 `fetchRegisteredUsers()` 完成後自動隱藏
         } catch (error) {
             console.error("Registration failed:", error);
             statusMessage.textContent = "404，TRY AGAIN LATER！";
-        } finally {
-            hideLoading();
+            hideLoading(); // 🎯 若請求失敗，立即隱藏載入畫面
         }
     });
 
@@ -96,11 +94,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             try {
                 let response = await fetch(`${APP_SCRIPT_URL}?action=cancel&name=${encodeURIComponent(name)}`);
                 let result = await response.json();
-                fetchRegisteredUsers();
+                fetchRegisteredUsers(); // 🎯 成功後更新名單，載入畫面會在 `fetchRegisteredUsers()` 完成後自動隱藏
             } catch (error) {
                 console.error("Cancellation failed:", error);
-            } finally {
-                hideLoading();
+                hideLoading(); // 🎯 若請求失敗，立即隱藏載入畫面
             }
         }
     });
