@@ -68,14 +68,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             let response = await fetch(`${APP_SCRIPT_URL}?action=quota`);
             let data = await response.json();
             quotaList.innerHTML = "";
-            data.records.forEach((user, index) => {
+            data.records.forEach(user => {
                 let li = document.createElement("li");
-                li.innerHTML = `${index + 1}.${user.name} <span class="quota-count">(${user.count})</span>`;
+                li.innerHTML = `${user.name} <span style="color: #C89F60; font-weight: bold;">(${user.count})</span>`;
                 quotaList.appendChild(li);
             });
         } catch (error) {
             console.error("Error fetching quota:", error);
-            quotaList.innerHTML = "<p class='error-message'>無法獲取可用次數，請稍後再試。</p>";
+            quotaList.innerHTML = "<p style='color: red;'>無法獲取可用次數，請稍後再試。</p>";
         } finally {
             hideLoading();
         }
