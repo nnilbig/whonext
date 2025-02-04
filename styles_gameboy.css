@@ -29,14 +29,14 @@ body {
 .loading-box {
     background: #2A2A2A; /* 深灰背景 */
     padding: 20px;
-    border: 6px solid #C4A200; /* 復古黃邊框 */
+    border: 2px solid #C4A200; /* 復古黃邊框 */
     text-align: center;
     font-family: 'Minecraftia', 'Press Start 2P';
     image-rendering: pixelated;
 }
 
 .loading-text {
-    font-size: 16px;
+    font-size: 14px;
     color: #E0E0D8; /* 復古灰白色 */
     animation: blink-animation 0.8s infinite alternate;
 }
@@ -56,7 +56,7 @@ h1, h2, h3 {
     padding: 10px;
     border: 2px solid #B85331; /* 復古橘紅 */
     margin: 15px auto;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 /* 📦 主容器 */
