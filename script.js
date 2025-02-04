@@ -62,6 +62,24 @@ document.addEventListener("DOMContentLoaded", async function () {
             hideLoading(); // 🎯 名單更新完後再隱藏載入畫面
         }
     }
+    
+    async function fetchQuota() {
+        try {
+            let response = await fetch(`${APP_SCRIPT_URL}?action=quota`);
+            let data = await response.json();
+            quotaList.innerHTML = "";
+            data.records.forEach((user, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `${index + 1}.${user.name} <span class="quota-count">(${user.count})</span>`;
+                quotaList.appendChild(li);
+            });
+        } catch (error) {
+            console.error("Error fetching quota:", error);
+            quotaList.innerHTML = "<p class='error-message'>無法獲取可用次數，請稍後再試。</p>";
+        } finally {
+            hideLoading();
+        }
+    }
 
     // 🎮 提交報名
     form.addEventListener("submit", async function (e) {
