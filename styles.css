@@ -146,3 +146,28 @@ button:hover {
     border-radius: 5px;
     cursor: pointer;
 }
+
+/* 🎮 可用次數列表樣式 */
+#quota-list {
+    list-style: none;
+    padding: 0;
+}
+
+#quota-list li {
+    background: #222;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* 🎮 金色數字樣式 */
+.quota-count {
+    color: #C89F60;
+    font-weight: bold;
+}
+
+
